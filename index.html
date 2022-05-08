@@ -1,56 +1,104 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <title>Socket.IO chat</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-    </style>
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-    <button id="quitBtn">Quit</button>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <script src="/socket.io/socket.io.js"></script>
+        body {
+            font: 13px Helvetica, Arial;
+        }
+
+        form {
+            background: #000;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 90%;
+            margin-right: .5%;
+        }
+
+        form button {
+            width: 9%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages li {
+            padding: 5px 10px;
+        }
+
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+<ul id="messages"></ul>
+<form action="">
+    <input id="command" autocomplete="off"/>
+    <button>Send</button>
+</form>
+<button id="quitBtn">Quit</button>
+
+<script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
-  $(function () {
-    let userName = localStorage.getItem('userName');
-    if (userName==null){
-        userName = prompt('Type your user name:','user123');
-        localStorage.setItem('userName',userName);
-    }
+    $(function () {
+        let userName = localStorage.getItem('userName');
+        if (userName == null) {
+            userName = prompt('Type your user name:', 'user123');
+            localStorage.setItem('userName', userName);
+        }
 
-    var socket = io();
-    socket.emit("it's me",userName);
+        let socket = io();
+        socket.emit("it's me", userName);
 
-    $('form').submit(function(e){
-      e.preventDefault(); // prevents page reloading
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
-      return false;
+        $('form').submit(function (e) {
+            e.preventDefault(); // prevents page reloading
+            let command = $('#command');
+
+            if (command.val().startsWith("play")) {
+                socket.emit('play', command.val());
+            } else {
+                socket.emit('chat message', command.val());
+            }
+            command.val('');
+            return false;
+        });
+
+        socket.on('chat message', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+
+        socket.on('wrong parameters', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+
+        $('#quitBtn').on('click', () => {
+            localStorage.removeItem('userName');
+            location.reload();
+        });
+
     });
-
-    socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').text(msg));
-    });
-
-    $('#quitBtn').on('click',()=>{
-      localStorage.removeItem('userName');
-      location.reload();
-    });
-
-  });
 </script>
 
-  </body>
+</body>
 </html>

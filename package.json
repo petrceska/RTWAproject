@@ -11,5 +11,14 @@
   "dependencies": {
     "express": "*",
     "socket.io": "*"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petrceska/RTWAproject.git"
+  },
+  "bugs": {
+    "url": "https://github.com/petrceska/RTWAproject/issues"
+  },
+  "homepage": "https://github.com/petrceska/RTWAproject#readme"
 }
