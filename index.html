@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Socket.IO chat</title>
+<!--    <link rel="stylesheet" type="text/css" href="/src/style.css">-->
     <style>
         * {
             margin: 0;
@@ -49,6 +49,7 @@
             background: #eee;
         }
     </style>
+    <title>Battleships</title>
 </head>
 <body>
 <ul id="messages"></ul>
@@ -74,11 +75,16 @@
         $('form').submit(function (e) {
             e.preventDefault(); // prevents page reloading
             let command = $('#command');
+            let commandValue = command.val();
 
-            if (command.val().startsWith("play")) {
-                socket.emit('play', command.val());
+            if (commandValue.startsWith("play")) {
+                commandValue = commandValue.substring(commandValue.indexOf(' ')+1);
+                socket.emit('play', commandValue);
+            }else if (commandValue.startsWith("shoot")) {
+                commandValue = commandValue.substring(commandValue.indexOf(' ')+1);
+                socket.emit('shoot', commandValue);
             } else {
-                socket.emit('chat message', command.val());
+                socket.emit('chat message', commandValue);
             }
             command.val('');
             return false;
@@ -89,7 +95,7 @@
         });
 
         socket.on('wrong parameters', function (msg) {
-            $('#messages').append($('<li>').text(msg));
+            $('#messages').append($('<li class="error">').text(msg));
         });
 
         $('#quitBtn').on('click', () => {

@@ -25,30 +25,37 @@ io.on('connection', function (socket) {
         io.emit('chat message', msg);
     });
 
+    socket.on('shoot', function (msg) {
+        let [row, col] = msg.split(",");
+        console.log(row, ".", col)
+    });
+
     socket.on('play', function (msg) {
-        let game = Game.createSingleplayer(users.findIndex(socket));
+        let game = Game.createSingleplayer(getKeyByValue(users,socket), socket);
 
         console.log('new game!: ' + msg);
         let argArray = msg.split(" ");
 
         for (let i in argArray) {
             let arg = argArray[i].split("=");
+            console.log(arg[0]);
+            console.log(arg[1]);
             switch (arg[0]) {
                 case "field":
                     console.log(arg[1]);
-                    game.field_size = parseInt(arg[1]);
+                    game.fieldSize = parseInt(arg[1]);
                     break;
                 case "ships":
                     console.log(arg[1]);
-                    game.ships_num = parseInt(arg[1]);
+                    game.shipsNum = parseInt(arg[1]);
                     break;
+                // TODO add case: opponent for multi
                 default:
+                    console.log("emit");
                     socket.emit('wrong parameters', `There is something wrong with argument "${argArray[i]}"`);
-                    break;
+                    return;
             }
-
         }
-
     });
 
     socket.on('disconnect', function () {
@@ -60,21 +67,28 @@ http.listen(3000, function () {
     console.log('listening on *:3000');
 });
 
+
+function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+}
+
 class Game {
-    static createSingleplayer(player) {
-        return new Game(player, "Jack Sparrow", false);
+    static createSingleplayer(player, socket) {
+        return new Game(player, "AI", socket, null, false);
     }
 
-    static createMultiplayer(player1, player2) {
-        return new Book(player1, player2, true);
+    static createMultiplayer(player1, player2, socket1) {
+        return new Book(player1, player2, socket1, users[player2], true);
     }
 
-    constructor(player1, player2, type) {
+    constructor(player1, player2, socket1, socket2, type) {
         this.player1 = player1;
         this.player2 = player2;
         this.multiplayer = type;
         this.singleplayer = !type;
-        this.field_size = 10;
-        this.ships_num = 6;
+        this.fieldSize = 10;
+        this.shipsNum = 6;
+        this.player1Socket = socket1;
+        this.player2Socket = socket2;
     }
 }
