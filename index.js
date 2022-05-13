@@ -31,7 +31,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('play', function (msg) {
-        let game = Game.createSingleplayer(getKeyByValue(users,socket), socket);
+        let game = Game.createSingleplayer(getKeyByValue(users, socket), socket);
 
         console.log('new game!: ' + msg);
         let argArray = msg.split(" ");
@@ -90,5 +90,89 @@ class Game {
         this.shipsNum = 6;
         this.player1Socket = socket1;
         this.player2Socket = socket2;
+        this.player1ShipsRemaining = this.shipsNum;
+        this.player2ShipsRemaining = this.shipsNum;
+    }
+
+    set ships(num){
+        this.player1ShipsRemaining = num;
+        this.player2ShipsRemaining = num;
+        this.shipsNum = num;
     }
 }
+
+// ---------------------------------------------------------------------------------------
+
+
+const {MongoClient} = require("mongodb");
+
+// The database to use
+const dbName = "myFirstDatabase";
+
+// Replace the following with your Atlas connection string
+// mongodb+srv://<username>:<password>@<clustername>/myFirstDatabase?retryWrites=true&w=majority
+const uri = `mongodb+srv://root:toor@cluster0.9qvug.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
+
+
+function gameFinished(game){
+    let person = loadPerson(game.player1)
+    //TODO upravit statictiky ++ try catch
+    savePerson(person)
+}
+
+async function saveGame(game) {
+    await client.connect();
+    const db = client.db(dbName);
+
+    // Use the collection "games"
+    const col = db.collection("games");
+
+    // Insert a single game, wait for promise so we can read it back
+    const p = await col.insertOne(game);
+
+}
+
+async function loadGame() {
+    await client.connect();
+    const db = client.db(dbName);
+
+    // Use the collection "games"
+    const col = db.collection("games");
+
+    // Find one game document
+    return await col.findOne();
+}
+async function savePerson(person) {
+    await client.connect();
+    const db = client.db(dbName);
+
+    // Use the collection "persons"
+    const col = db.collection("persons");
+
+    // Insert a single person, wait for promise so we can read it back
+    const p = await col.insertOne(person);
+
+}
+
+async function loadPerson() {
+    await client.connect();
+    const db = client.db(dbName);
+
+    // Use the collection "games"
+    const col = db.collection("games");
+
+    // Find one game document
+    return await col.findOne();
+}
+
+let game = Game.createSingleplayer("testik", 'socket');
+game.ships = 8;
+saveGame(game)
+    .catch(console.error)
+    .finally(() => client.close());
+
+let loaded = loadGame()
+    .then(console.log)
+    .catch(console.error)
+    .finally(() => client.close());
