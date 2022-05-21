@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<!--    <link rel="stylesheet" type="text/css" href="/src/style.css">-->
+    <!--    <link rel="stylesheet" type="text/css" href="/src/style.css">-->
     <style>
         * {
             margin: 0;
@@ -48,11 +48,47 @@
         #messages li:nth-child(odd) {
             background: #eee;
         }
+
+        .field{
+            float: left;
+            border: 3px solid black;
+            width: 300px;
+            height: 300px;
+        }
+
+        .field tr{
+            text-align: center;
+            vertical-align: center;
+        }
+
+        .field tr td{
+            border: 1px solid black;
+            margin: 0;
+        }
+
+        .field tr td:first-child, .field tr:first-child td{
+            background-color: gray;
+        }
+
+        #field-opponent{
+            border-left: 3px solid red;
+        }
+
+        #field-player{
+            border-right: 1px solid red;
+        }
     </style>
     <title>Battleships</title>
 </head>
 <body>
 <ul id="messages"></ul>
+
+<table class="field" id="field-player">
+</table>
+
+<table class="field" id="field-opponent">
+</table>
+
 <form action="">
     <input id="command" autocomplete="off"/>
     <button>Send</button>
@@ -78,10 +114,12 @@
             let commandValue = command.val();
 
             if (commandValue.startsWith("play")) {
-                commandValue = commandValue.substring(commandValue.indexOf(' ')+1);
+
+                commandValue = commandValue.replace('play', '').trim();
+
                 socket.emit('play', commandValue);
-            }else if (commandValue.startsWith("shoot")) {
-                commandValue = commandValue.substring(commandValue.indexOf(' ')+1);
+            } else if (commandValue.startsWith("shoot")) {
+                commandValue = commandValue.substring(commandValue.indexOf(' ') + 1);
                 socket.emit('shoot', commandValue);
             } else {
                 socket.emit('chat message', commandValue);
@@ -93,6 +131,71 @@
         socket.on('chat message', function (msg) {
             $('#messages').append($('<li>').text(msg));
         });
+
+        socket.on('hit', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+
+        socket.on('miss', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+
+        socket.on('opponent-miss', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+
+        socket.on('opponent-hit', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+
+        socket.on('construct game', function (params) {
+            let fieldSize = 10;
+            console.log(params);
+
+            let argArray = params.split(" ");
+
+            for (let i in argArray) {
+                let arg = argArray[i].split("=");
+
+                switch (arg[0]) {
+                    case "field":
+                        fieldSize = parseInt(arg[1]);
+                        break;
+                    case "ships":
+                        console.log(arg[1]);
+                        break;
+                    default:
+                        $('#messages').append($('<li>').text(`There is something wrong with argument while creating game: "${argArray[i]}"`));
+                        return;
+                }
+            }
+
+            // generate one row according to width
+            let oneRow = '<tr>';
+            for (let i = 0; i < fieldSize; i++) {
+                oneRow += '<td>X</td>';
+            }
+            oneRow += '</tr>';
+
+            let firstRow = '<tr><td></td>';
+            for (let i = 0; i < fieldSize - 1; i++) {
+                firstRow += `<td>${i}</td>`;
+            }
+            firstRow += '</tr>';
+
+            //generate rows in both playing fields fields
+            let field = firstRow;
+            for (let i = 0; i < fieldSize-1; i++) {
+                field += oneRow;
+                field = field.replace(/<tr><td>x/i, `<tr><td>${i}`);
+            }
+
+            $('.field').append(field);
+
+            console.log($('#field-player').find('tr').eq(2).find('tr').eq(2));
+
+        });
+
 
         socket.on('wrong parameters', function (msg) {
             $('#messages').append($('<li class="error">').text(msg));

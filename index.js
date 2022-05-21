@@ -35,11 +35,11 @@ io.on('connection', function (socket) {
 
         console.log('new game!: ' + msg);
         let argArray = msg.split(" ");
+        console.log(argArray)
 
         for (let i in argArray) {
             let arg = argArray[i].split("=");
-            console.log(arg[0]);
-            console.log(arg[1]);
+            if(arg[0] !== ''){
             switch (arg[0]) {
                 case "field":
                     console.log(arg[1]);
@@ -56,6 +56,9 @@ io.on('connection', function (socket) {
                     return;
             }
         }
+        }
+
+        socket.emit('construct game', `field=${game.fieldSize} ships=123456`);
     });
 
     socket.on('disconnect', function () {
