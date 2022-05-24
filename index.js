@@ -1,5 +1,4 @@
-import {server} from "./server.js";
-
+import './server.js'
 var app = require('express')();
 
 app.get('/', function (req, res) {

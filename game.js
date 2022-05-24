@@ -1,4 +1,4 @@
-export class Game {
+export default class Game {
     static createSingleplayer(player, socket) {
         return new Game(player, "AI", socket, null, false);
     }

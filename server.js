@@ -1,8 +1,12 @@
-import {Game} from "./game.js";
+import Game from "./game.js";
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 let users = {};
+
+function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+}
 
 io.on('connection', function (socket) {
     console.log('a user connected');
@@ -62,8 +66,3 @@ io.on('connection', function (socket) {
 http.listen(3000, function () {
     console.log('listening on *:3000');
 });
-
-function getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
-}
-
