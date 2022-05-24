@@ -1,4 +1,4 @@
-export class Game {
+export default class Game {
     static createSingleplayer(player, socket) {
         return new Game(player, "AI", socket, null, false);
     }
@@ -17,4 +17,8 @@ export class Game {
         this.player1Socket = socket1;
         this.player2Socket = socket2;
     }
+    // private parameters 
+    // boolean win
+    // timestamp start-end
+    // both player's number of destroyed ships
 }

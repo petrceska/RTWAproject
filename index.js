@@ -9,7 +9,7 @@ app.get('/', function (req, res) {
 
 let users = {};
 
-io.on('connection', onConnection);
+io.on('connection', onConnection(socket, users));
 
 http.listen(3000, function () {
     console.log('listening on *:3000');

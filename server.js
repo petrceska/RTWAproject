@@ -1,4 +1,6 @@
-export function onConnection(socket) {
+import Game from "./game.js";
+
+export function onConnection(socket, users) {
     console.log('a user connected');
 
     socket.on("it's me", (name) => {
