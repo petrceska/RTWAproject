@@ -22,6 +22,6 @@ class Game {
     // boolean win
     // timestamp start-end
     // both player's number of destroyed ships
-
-    
 }
+
+module.exports = Game
