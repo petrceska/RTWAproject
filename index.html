@@ -133,11 +133,12 @@
         });
 
         socket.on('hit', function (msg) {
-            $('#messages').append($('<li>').text(msg));
+
+            $('#field-opponent .row:nth-child(2) .col:nth-child(2)').text('O')
         });
 
         socket.on('miss', function (msg) {
-            $('#messages').append($('<li>').text(msg));
+            $('#field-opponent .row:nth-child(2) .col:nth-child(2)').text('X')
         });
 
         socket.on('opponent-miss', function (msg) {
@@ -171,29 +172,26 @@
             }
 
             // generate one row according to width
-            let oneRow = '<tr>';
+            let oneRow = '<tr class="row"><td class="col">X</td>';
             for (let i = 0; i < fieldSize; i++) {
-                oneRow += '<td>X</td>';
+                oneRow += '<td class="col"></td>';
             }
             oneRow += '</tr>';
 
-            let firstRow = '<tr><td></td>';
-            for (let i = 0; i < fieldSize - 1; i++) {
-                firstRow += `<td>${i}</td>`;
+            let firstRow = '<tr class="row"><td class="row"></td>';
+            for (let i = 0; i < fieldSize; i++) {
+                firstRow += `<td class="row">${i}</td>`;
             }
             firstRow += '</tr>';
 
             //generate rows in both playing fields fields
             let field = firstRow;
-            for (let i = 0; i < fieldSize-1; i++) {
+            for (let i = 0; i < fieldSize; i++) {
                 field += oneRow;
-                field = field.replace(/<tr><td>x/i, `<tr><td>${i}`);
+                field = field.replace(/X/i, `${String.fromCharCode(i+65)}`); //65 char-code of A
             }
 
             $('.field').append(field);
-
-            console.log($('#field-player').find('tr').eq(2).find('tr').eq(2));
-
         });
 
 
