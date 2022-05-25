@@ -1,4 +1,4 @@
-import Game from "./game.js";
+const Game = require("./game");
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
