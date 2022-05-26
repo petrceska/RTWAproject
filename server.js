@@ -1,4 +1,5 @@
-const Game = require("./game.js");
+const Game = require("./game");
+const Console = require("console");
 let users = [];
 let games = [];
 
@@ -11,7 +12,7 @@ function server(io) {
         console.log('a user connected');
 
         socket.on("it's me", (name) => {
-            if (users[name] != null) {
+            if (users[name] !== null) {
                 console.log('returning user: ' + name + ' (after a client refresh). Welcome back!');
             } else {
                 console.log('new user by the name of: ' + name);
@@ -26,7 +27,21 @@ function server(io) {
 
         socket.on('shoot', function (msg) {
 
-            console.log(row, ".", col)
+            let coord = null;
+            try {
+                coord = msg.split(",");
+
+                if (coord == null || coord[0] == null || coord[1] == null) {
+                    socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
+                }
+            }catch (e) {
+                socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
+            }
+
+            socket.emit('miss', `${coord[0]},${coord[1]}`);
+            // socket.emit('hit', `${row},${col}`);
+            // game.player2.socket.emit('game invite', `${game.player1.name}`);
+            // TODO responses
         });
 
         socket.on('play', function (msg) {
@@ -43,11 +58,11 @@ function server(io) {
                     switch (arg[0]) {
                         case "field":
                             console.log(arg[1]);
-                            fieldSize = parseInt(arg[1]);
+                            fieldSize = Math.max(10, Math.min(parseInt(arg[1]), 25)); // field size between 10, 25
                             break;
                         case "ships":
                             console.log(arg[1]);
-                            shipsNum = parseInt(arg[1]);
+                            shipsNum = Math.max(8, Math.min(parseInt(arg[1]), 30)); // field size between 10, 25
                             break;
                         case "opponent":
                             console.log(arg[1]);
