@@ -28,8 +28,22 @@ $(function () {
                 socket.emit('shoot', command);
             }
 
-        } else {
+        } else if (commandValue.startsWith("accept")) {
+            commandValue = commandValue.replace('accept', '').trim();
 
+                socket.emit('accept', commandValue);
+
+        } else if (commandValue.startsWith("decline")) {
+            commandValue = commandValue.replace('decline', '').trim();
+
+            socket.emit('decline', commandValue);
+
+        } else if (commandValue.startsWith("cancel")) {
+            commandValue = commandValue.replace('cancel', '').trim();
+
+            socket.emit('cancel', commandValue);
+
+        } else {
             socket.emit('chat message', commandValue);
 
         }
@@ -44,28 +58,63 @@ $(function () {
     });
 
     socket.on('hit', function (msg) {
-        $('#field-opponent .row:nth-child(2) .col:nth-child(2)').text('O')
+        let coord = msg.split(",");
+
+        if (coord == null || coord[0] == null || coord[1] == null) {
+            $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
+            return
+        }
+        $(`#field-opponent .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('O')
     });
 
     socket.on('miss', function (msg) {
-        $('#messages').append($('<li>').text(msg));
-        $('#field-opponent .row:nth-child(2) .col:nth-child(2)').text('X')
+        let coord = msg.split(",");
+
+        if (coord == null || coord[0] == null || coord[1] == null) {
+            $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
+            return
+        }
+        $(`#field-opponent .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('X')
     });
 
     socket.on('opponent-miss', function (msg) {
-        $('#messages').append($('<li>').text(msg));
+        let coord = msg.split(",");
+
+        if (coord == null || coord[0] == null || coord[1] == null) {
+            $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
+            return
+        }
+        $(`#field-player .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('X')
     });
 
     socket.on('opponent-hit', function (msg) {
-        $('#messages').append($('<li>').text(msg));
+        let coord = msg.split(",");
+
+        if (coord == null || coord[0] == null || coord[1] == null) {
+            $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
+            return
+        }
+        $(`#field-player .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('O')
     });
 
     socket.on('game invite', function (msg) {
-        $('#messages').append($('<li>').text(msg));
+        let coord = msg.split("=");
+
+        if (coord == null || coord[0] == null || coord[1] == null) {
+            $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
+            return
+        }
+        $('#messages').append($('<li>').text(`INVITE: ${msg} challenged you for a game. To respond, write "accept ${msg}" or "decline ${msg}".`));
     });
 
     socket.on('waiting for opponent', function (msg) {
-        $('#messages').append($('<li>').text(msg));
+        let coord = msg.split("=");
+
+        if (coord == null || coord[0] == null || coord[1] == null) {
+            $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
+            return
+        }
+        $('#messages').append($('<li>').text(`WAITING FOR OPPONENT TO RESPOND: ${msg} was challenged for a game. To cancel the challenge, write "cancel ${msg}".`));
     });
 
     socket.on('wrong parameters', function (msg) {
