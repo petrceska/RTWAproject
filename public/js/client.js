@@ -21,9 +21,12 @@ $(function () {
             socket.emit('play', commandValue);
 
         } else if (commandValue.startsWith("shoot")) {
+            commandValue = commandValue.replace('shoot', '').trim().toUpperCase();
 
-            commandValue = commandValue.replace('shoot', '').trim();
-            socket.emit('shoot', commandValue);
+            let command = positionToCoordinates(commandValue);
+            if (command != null){
+                socket.emit('shoot', command);
+            }
 
         } else {
 
@@ -45,6 +48,7 @@ $(function () {
     });
 
     socket.on('miss', function (msg) {
+        $('#messages').append($('<li>').text(msg));
         $('#field-opponent .row:nth-child(2) .col:nth-child(2)').text('X')
     });
 
@@ -112,6 +116,30 @@ $(function () {
 
         $('.field').append(field);
     });
+
+    function positionToCoordinates(command){
+        let coordinates = command.match(/[a-zA-Z]+|[0-9]+/g)
+
+        if (coordinates == null || coordinates.length !== 2) {
+            $('#messages').append($('<li>').text(`You can not shoot at position ${coordinates}`));
+            return null
+        }
+        let row, col = null;
+
+        for (let i in coordinates) {
+            if (/^[A-Z]+$/.test(coordinates[i])) {
+                row = coordinates[i].charCodeAt(0) - 65;
+
+            } else if (/^[0-9]+$/.test(coordinates[i])) {
+                col = parseInt(coordinates[i]);
+
+            } else {
+                $('#messages').append($('<li>').text(`You can not shoot at position ${coordinates}`));
+                return null
+            }
+        }
+        return `${row},${col}`
+    }
 
 
     $('#quitBtn').on('click', () => {
