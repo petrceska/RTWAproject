@@ -1,17 +1,15 @@
 class Game {
-    static createSingleplayer(player, socket) {
-        return new Game(player, null, socket, null, false);
+    static createSingleplayer(player, socket, fieldSize) {
+        return new Game(player, null, socket, null, false, fieldSize);
     }
 
-    static createMultiplayer(player1, player2, socket1, socket2) {
-        return new Game(player1, player2, socket1, socket2, true);
+    static createMultiplayer(player1, player2, socket1, socket2, fieldSize) {
+        return new Game(player1, player2, socket1, socket2, true, fieldSize);
     }
 
-    constructor(player1, player2, socket1, socket2, type) {
-        this.fieldSize = 10;
-        this.shipsNum = 6;
-        this.player1 = new Player(player1, socket1, this.shipsNum);
-        this.player2 = new Player(player2, socket2, this.shipsNum);
+    constructor(player1, player2, socket1, socket2, type, fieldSize = 10) {
+        this.player1 = new Player(player1, socket1, new Field(fieldSize));
+        this.player2 = new Player(player2, socket2, new Field(fieldSize));
         this.multiplayer = type;
         this.singleplayer = !type;
         this.winner = null;
@@ -19,28 +17,43 @@ class Game {
         this.end = null;
     }
 
-    set ships(shipsNum){
-        let difference = shipsNum - this.shipsNum
-        if (shipsNum !== null){
-            this.shipsNum += difference
-            this.player1.remainingShips += difference
-            this.player2.remainingShips += difference
-        }
+}
+
+class Player {
+    constructor(name, socket, ships, field) {
+        this.name = name;
+        this.socket = socket;
+        this.ships = ships;
+        this.field = field;
+    }
+}
+
+class Field {
+    constructor(fieldSize) {
+        this.fieldSize = fieldSize;
     }
 
-    set field(fieldSize){
-        if (fieldSize !== null){
+    set setSize(fieldSize) {
+        if (fieldSize !== null) {
             this.fieldSize = fieldSize
         }
     }
-}
 
-class Player{
-    constructor(name, socket, ships) {
-        this.name = name;
-        this.socket = socket;
-        this.remainingShips = ships;
+    set setFieldShips(ships) {
+        this.ships = new Array(ships);
+        this.shipsNum = this.ships.length;
+        this.currentShipsNum = shipsNum;
     }
+
 }
 
+class Ship {
+    constructor(type, pos_x, pos_y) {
+        this.type = type;
+        this.pos_x = pos_x;
+        this.pos_y = pos_y;
+    }
+    // check if the ship's position is on the position of another ship 
+
+}
 module.exports = Game
