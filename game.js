@@ -1,27 +1,46 @@
 class Game {
     static createSingleplayer(player, socket) {
-        return new Game(player, "AI", socket, null, false);
+        return new Game(player, null, socket, null, false);
     }
 
-    static createMultiplayer(player1, player2, socket1) {
-        return new Book(player1, player2, socket1, users[player2], true);
+    static createMultiplayer(player1, player2, socket1, socket2) {
+        return new Game(player1, player2, socket1, socket2, true);
     }
 
     constructor(player1, player2, socket1, socket2, type) {
-        this.player1 = player1;
-        this.player2 = player2;
-        this.multiplayer = type;
-        this.singleplayer = !type;
         this.fieldSize = 10;
         this.shipsNum = 6;
-        this.player1Socket = socket1;
-        this.player2Socket = socket2;
+        this.player1 = new Player(player1, socket1, this.shipsNum);
+        this.player2 = new Player(player2, socket2, this.shipsNum);
+        this.multiplayer = type;
+        this.singleplayer = !type;
+        this.winner = null;
+        this.start = null;
+        this.end = null;
     }
 
-    // private parameters 
-    // boolean win
-    // timestamp start-end
-    // both player's number of destroyed ships
+    set ships(shipsNum){
+        let difference = shipsNum - this.shipsNum
+        if (shipsNum !== null){
+            this.shipsNum += difference
+            this.player1.remainingShips += difference
+            this.player2.remainingShips += difference
+        }
+    }
+
+    set field(fieldSize){
+        if (fieldSize !== null){
+            this.fieldSize = fieldSize
+        }
+    }
+}
+
+class Player{
+    constructor(name, socket, ships) {
+        this.name = name;
+        this.socket = socket;
+        this.remainingShips = ships;
+    }
 }
 
 module.exports = Game
