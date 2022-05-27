@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <style>
+
+    </style>
+    <title>Battleships</title>
+</head>
+<body>
+<ul id="messages"></ul>
+
+<table class="field" id="field-player">
+</table>
+
+<table class="field" id="field-opponent">
+</table>
+
+<form action="">
+    <input id="command" autocomplete="off"/>
+    <button>Send</button>
+</form>
+<button id="quitBtn">Quit</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="js/client.js"></script>
+
+</body>
+</html>
