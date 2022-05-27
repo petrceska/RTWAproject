@@ -44,6 +44,30 @@ function server(io) {
             // TODO responses
         });
 
+        socket.on("decline", (name) => {
+            if (users[name] !== null) {
+                //TODO delete object game
+            } else {
+                socket.emit('message',`There is no game associated with user ${name}.`);
+            }
+        });
+
+        socket.on("accept", (name) => {
+            if (users[name] !== null) {
+                //TODO create object and start game
+            } else {
+                socket.emit('message',`There is no game associated with user ${name}.`);
+            }
+        });
+
+        socket.on("cancel", (name) => {
+            if (users[name] !== null) {
+                //TODO delete object game
+            } else {
+                socket.emit('message',`There is no game associated with user ${name}.`);
+            }
+        });
+
         socket.on('play', function (msg) {
 
             console.log('new game!: ' + msg);
