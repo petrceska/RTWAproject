@@ -62,7 +62,6 @@ class Ship {
         this.type = type;
         this.pos_x = pos_x;
         this.pos_y = pos_y;
-        this.len
     }
 
     set setType(type) {
