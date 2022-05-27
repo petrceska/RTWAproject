@@ -18,6 +18,8 @@ function server(io) {
                 console.log('new user by the name of: ' + name);
             }
             users[name] = socket;
+            //TODO: Solve case when players have the same name
+            // Proposal: make a dictionary with name and id where ID will be generated automaticaly and everything will be matched to it
         });
 
         socket.on('chat message', function (msg) {
@@ -34,7 +36,7 @@ function server(io) {
                 if (coord == null || coord[0] == null || coord[1] == null) {
                     socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
                 }
-            }catch (e) {
+            } catch (e) {
                 socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
             }
 
@@ -48,7 +50,7 @@ function server(io) {
             if (users[name] !== null) {
                 //TODO delete object game
             } else {
-                socket.emit('message',`There is no game associated with user ${name}.`);
+                socket.emit('message', `There is no game associated with user ${name}.`);
             }
         });
 
@@ -56,7 +58,7 @@ function server(io) {
             if (users[name] !== null) {
                 //TODO create object and start game
             } else {
-                socket.emit('message',`There is no game associated with user ${name}.`);
+                socket.emit('message', `There is no game associated with user ${name}.`);
             }
         });
 
@@ -64,7 +66,7 @@ function server(io) {
             if (users[name] !== null) {
                 //TODO delete object game
             } else {
-                socket.emit('message',`There is no game associated with user ${name}.`);
+                socket.emit('message', `There is no game associated with user ${name}.`);
             }
         });
 
