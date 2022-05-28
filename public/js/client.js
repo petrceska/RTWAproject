@@ -1,6 +1,6 @@
 $(function () {
     let userName = localStorage.getItem('userName');
-    if (userName == null) {
+    if (userName == null || userName === 'null') {
         userName = prompt('Type your user name:', 'user123');
         localStorage.setItem('userName', userName);
     }
@@ -24,14 +24,14 @@ $(function () {
             commandValue = commandValue.replace('shoot', '').trim().toUpperCase();
 
             let command = positionToCoordinates(commandValue);
-            if (command != null){
+            if (command != null) {
                 socket.emit('shoot', command);
             }
 
         } else if (commandValue.startsWith("accept")) {
             commandValue = commandValue.replace('accept', '').trim();
 
-                socket.emit('accept', commandValue);
+            socket.emit('accept', commandValue);
 
         } else if (commandValue.startsWith("decline")) {
             commandValue = commandValue.replace('decline', '').trim();
@@ -107,6 +107,10 @@ $(function () {
         $('#messages').append($('<li>').text(`INVITE: ${msg} challenged you for a game. To respond, write "accept ${msg}" or "decline ${msg}".`));
     });
 
+    socket.on('invite deleted', function (msg) {
+        $('#messages').append($('<li>').text(msg));
+    });
+
     socket.on('waiting for opponent', function (msg) {
         let coord = msg.split("=");
 
@@ -160,7 +164,7 @@ $(function () {
         let field = firstRow;
         for (let i = 0; i < fieldSize; i++) {
             field += oneRow;
-            field = field.replace(/X/i, `${String.fromCharCode(i+65)}`); //65 char-code of A
+            field = field.replace(/X/i, `${String.fromCharCode(i + 65)}`); //65 char-code of A
         }
 
         $('.field').append(field);
@@ -168,21 +172,21 @@ $(function () {
 
     socket.on('game ended', function (param) {
 
-            switch (param) {
-                case "win":
-                    break;
-                case "loss":
-                    break;
-                default:
-                    $('#messages').append($('<li>').text(`There is something wrong with argument while ending game: "${param}"`));
-                    return;
-            }
+        switch (param) {
+            case "win":
+                break;
+            case "loss":
+                break;
+            default:
+                $('#messages').append($('<li>').text(`There is something wrong with argument while ending game: "${param}"`));
+                return;
+        }
         $('#field-player').html("");
         $('#field-opponent').html("");
     });
 
 
-    function positionToCoordinates(command){
+    function positionToCoordinates(command) {
         let coordinates = command.match(/[a-zA-Z]+|[0-9]+/g)
 
         if (coordinates == null || coordinates.length !== 2) {

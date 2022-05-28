@@ -10,6 +10,7 @@ function evaluateGame(game) {
     let ps2 = loadStats(game.player2.name)
 
 }
+
 // --------------------------------------------------------------------------------------------------------------
 
 function getKeyByValue(object, value) {
@@ -21,7 +22,7 @@ function server(io) {
         console.log('a user connected');
 
         socket.on("it's me", (name) => {
-            if (users[name] !== null) {
+            if (name !== null || users[name] !== null) {
                 console.log('returning user: ' + name + ' (after a client refresh). Welcome back!');
             } else {
                 console.log('new user by the name of: ' + name);
@@ -43,14 +44,15 @@ function server(io) {
                 if (coord == null || coord[0] == null || coord[1] == null) {
                     socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
                 }
-            }catch (e) {
+            } catch (e) {
                 socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
             }
 
+            let game = games[socket.id];
             // socket.emit('miss', `${coord[0]},${coord[1]}`);
             // socket.emit('hit', `${coord[0]},${coord[1]}`);
             // socket.emit('game ended', `win`);
-            socket.emit('game ended', `loss`);
+            // socket.emit('game ended', `loss`);
             // game.player2.socket.emit('game invite', `${game.player1.name}`);
             // TODO responses
 
@@ -58,31 +60,60 @@ function server(io) {
 
         socket.on("decline", (name) => {
             if (users[name] !== null) {
-                //TODO delete object game
+                let game = games[socket.id];
+                if (game == null) {
+                    socket.emit('message', `There is no game associated with user ${name}.`);
+                    return
+                }
+
+                game.player1.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player2.name}")`);
+                delete games[game.player1.socket.id]
+
+                if (game.multiplayer) {
+                    game.player2.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player1.name}")`);
+                    delete games[game.player2.socket.id]
+                }
+
             } else {
-                socket.emit('message',`There is no game associated with user ${name}.`);
+                socket.emit('message', `There is no game associated with user ${name}.`);
             }
         });
 
         socket.on("accept", (name) => {
             if (users[name] !== null) {
-                PlayerStats.load(name).then(stats => {
+                let game = games[socket.id];
+                if (game == null) {
+                    socket.emit('message', `There is no game associated with user ${name}.`);
+                    return
+                }
+                game.start = new Date();
+                game.player1.socket.emit('construct game', `field=10 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                game.player2.socket.emit('construct game', `field=10 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                //TODO create objects and start game
 
-                    stats.gamesPlayed = 1;
-                    console.log(stats)
-                    stats.saveStats()
-                    //TODO create object and start game
-                })
             } else {
-                socket.emit('message',`There is no game associated with user ${name}.`);
+                socket.emit('message', `There is no game associated with user ${name}.`);
             }
         });
 
         socket.on("cancel", (name) => {
             if (users[name] !== null) {
-                //TODO delete object game
+                let game = games[socket.id];
+                if (game == null) {
+                    socket.emit('message', `There is no game associated with user ${name}.`);
+                    return
+                }
+
+                game.player1.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player2.name}")`);
+                delete games[game.player1.socket.id]
+
+                if (game.multiplayer) {
+                    game.player2.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player1.name}")`);
+                    delete games[game.player2.socket.id]
+                }
+
             } else {
-                socket.emit('message',`There is no game associated with user ${name}.`);
+                socket.emit('message', `There is no game associated with user ${name}.`);
             }
         });
 
@@ -119,20 +150,24 @@ function server(io) {
             }
 
             if (opponent == null) {
-                let game = Game.createSingleplayer(getKeyByValue(users, socket), socket);
-                game.ships = shipsNum
-                game.field = fieldSize
-                games.push(game)
+                let game = Game.createSingleplayer(getKeyByValue(users, socket), socket, fieldSize);
+                game.start = new Date();
+                games[socket.id] = game
                 socket.emit('construct game', `field=10 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
 
             } else {
-                if (!opponent in users) {
+                let opponentSocket = users[opponent]
+                if (!opponent in users || opponentSocket == null) {
                     socket.emit('wrong parameters', `There is no user with nickname "${opponent}"`);
+                    return;
                 }
 
-                let game = Game.createMultiplayer(getKeyByValue(users, socket), socket, opponent);
-                socket.emit('waiting for opponent', `opponent=${game.player1.name}`);
+                let game = Game.createMultiplayer(getKeyByValue(users, socket), opponent, socket, opponentSocket, fieldSize);
+                games[socket.id] = game
+                games[game.player2.socket.id] = game
+                socket.emit('waiting for opponent', `opponent=${game.player2.name}`);
                 game.player2.socket.emit('game invite', `opponent=${game.player1.name}`);
+
             }
         });
 
