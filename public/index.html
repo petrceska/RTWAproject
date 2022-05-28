@@ -10,17 +10,20 @@
 <body>
 <ul id="messages"></ul>
 
-<table class="field" id="field-player">
-</table>
-
-<table class="field" id="field-opponent">
-</table>
+<div id="left-div">
+    <table class="field" id="field-player">
+    </table>
+</div>
+<div id="right-div">
+    <table class="field" id="field-opponent">
+    </table>
+</div>
 
 <form action="">
     <input id="command" autocomplete="off"/>
     <button>Send</button>
 </form>
-<button id="quitBtn">Quit</button>
+<button id="quitBtn">Log out</button>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>

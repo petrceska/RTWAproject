@@ -1,7 +1,16 @@
 const Game = require("./game");
+const PlayerStats = require("./PlayerStats");
 const Console = require("console");
 let users = [];
 let games = [];
+
+// --------------------------------------------------------------------------------------------------------------
+function evaluateGame(game) {
+    let ps1 = loadStats(game.player1.name)
+    let ps2 = loadStats(game.player2.name)
+
+}
+// --------------------------------------------------------------------------------------------------------------
 
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
@@ -38,10 +47,13 @@ function server(io) {
                 socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
             }
 
-            socket.emit('miss', `${coord[0]},${coord[1]}`);
-            // socket.emit('hit', `${row},${col}`);
+            // socket.emit('miss', `${coord[0]},${coord[1]}`);
+            // socket.emit('hit', `${coord[0]},${coord[1]}`);
+            // socket.emit('game ended', `win`);
+            socket.emit('game ended', `loss`);
             // game.player2.socket.emit('game invite', `${game.player1.name}`);
             // TODO responses
+
         });
 
         socket.on("decline", (name) => {
@@ -54,7 +66,13 @@ function server(io) {
 
         socket.on("accept", (name) => {
             if (users[name] !== null) {
-                //TODO create object and start game
+                PlayerStats.load(name).then(stats => {
+
+                    stats.gamesPlayed = 1;
+                    console.log(stats)
+                    stats.saveStats()
+                    //TODO create object and start game
+                })
             } else {
                 socket.emit('message',`There is no game associated with user ${name}.`);
             }
@@ -105,7 +123,7 @@ function server(io) {
                 game.ships = shipsNum
                 game.field = fieldSize
                 games.push(game)
-                socket.emit('construct game', `field=${game.fieldSize} ships=${game.shipsNum}`);
+                socket.emit('construct game', `field=10 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
 
             } else {
                 if (!opponent in users) {

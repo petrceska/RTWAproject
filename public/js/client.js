@@ -166,6 +166,22 @@ $(function () {
         $('.field').append(field);
     });
 
+    socket.on('game ended', function (param) {
+
+            switch (param) {
+                case "win":
+                    break;
+                case "loss":
+                    break;
+                default:
+                    $('#messages').append($('<li>').text(`There is something wrong with argument while ending game: "${param}"`));
+                    return;
+            }
+        $('#field-player').html("");
+        $('#field-opponent').html("");
+    });
+
+
     function positionToCoordinates(command){
         let coordinates = command.match(/[a-zA-Z]+|[0-9]+/g)
 
