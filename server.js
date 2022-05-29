@@ -28,6 +28,8 @@ function server(io) {
                 console.log('new user by the name of: ' + name);
             }
             users[name] = socket;
+            //TODO: Solve case when players have the same name
+            // Proposal: make a dictionary with name and id where ID will be generated automaticaly and everything will be matched to it
         });
 
         socket.on('chat message', function (msg) {
