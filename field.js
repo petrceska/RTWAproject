@@ -2,6 +2,7 @@ class Field {
     constructor(fieldSize) {
         this.fieldSize = fieldSize;
         this.field = Array.from(Array(fieldSize), () => Array(fieldSize).fill(0));
+        this.ships = [];
     }
 
     set setSize(fieldSize) {
@@ -12,9 +13,36 @@ class Field {
     }
 
     set setFieldShips(ships) {
-        this.ships = new Array(ships);
+        this.ships.push(ships);
         this.shipsNum = this.ships.length;
         this.currentShipsNum = shipsNum;
+    }
+
+    get getShips() {
+        return this.ships;
+    }
+
+    get getField() {
+        return this.field;
+    }
+
+    destroyFieldSpot(x, y) {
+        this.field[x][y] = 2;
+    }
+
+    isShipDestroyed(ship) {
+        let count = 0;
+        ship.position.forEach(function (points, index) {
+            x = points[0];
+            y = points[1];
+            if (this.field[x][y] === 2) {
+                count++;
+                if (count === ship.position.length) {
+                    ship.destroyed = true;
+                    return true;
+                }
+            }
+        });
     }
 
     getAvailable1xXSpaces(arr = this.field) {
@@ -58,7 +86,7 @@ class Field {
         return availableSpace;
     }
 
-    checkPosition(x, y) {
+    checkShipPosition(x, y) {
         if (this.field[x][y] === 1) {
             return true;
         }

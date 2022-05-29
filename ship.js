@@ -1,18 +1,28 @@
 class Ship {
-    constructor(type, pos_x, pos_y) {
+    constructor(type, position) {
         this.type = type;
-        this.pos_x = pos_x;
-        this.pos_y = pos_y;
+        this.position = position;
+        this.destroyed = false;
     }
+
 
     set setType(type) {
         this.type = type;
         this.shipSize(type);
+        this.changeShape();
     }
 
-    changeShipPosition(x = this.pos_x, y = this.pos_y) {
-        this.pos_x = x;
-        this.pos_y = y;
+    changeShape(width = this.width, len = this.len) {
+        if (width && len !== null) {
+            // create array for 
+            this.position = Array.from(Array(len * width), () => Uint8Array(2));
+        }
+    }
+
+    changePosition(arrayOfPoints) {
+        // for change position create empty array
+        this.position = Array.from(Array(this.len * this.width), () => Uint8Array(2));
+        this.position.push(arrayOfPoints);
     }
 
     shipSize(type) {
@@ -61,4 +71,5 @@ class Ship {
     }
 
 }
+
 module.exports = Ship
