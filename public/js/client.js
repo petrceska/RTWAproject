@@ -43,6 +43,8 @@ $(function () {
 
             socket.emit('cancel', commandValue);
 
+        } else if (commandValue.startsWith("scoreboard")) {
+            socket.emit('scoreboard', commandValue);
         } else {
             socket.emit('chat message', commandValue);
 
@@ -58,6 +60,16 @@ $(function () {
     });
 
     socket.on('hit', function (msg) {
+        let coord = msg.split(",");
+
+        if (coord == null || coord[0] == null || coord[1] == null) {
+            $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
+            return
+        }
+        $(`#field-opponent .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('O')
+    });
+
+    socket.on('scoreboard', function (msg) {
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {

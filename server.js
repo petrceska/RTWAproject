@@ -8,7 +8,6 @@ let games = [];
 function evaluateGame(game) {
     let ps1 = loadStats(game.player1.name)
     let ps2 = loadStats(game.player2.name)
-
 }
 
 // --------------------------------------------------------------------------------------------------------------
@@ -51,12 +50,14 @@ function server(io) {
             }
 
             let game = games[socket.id];
+
             // socket.emit('miss', `${coord[0]},${coord[1]}`);
             // socket.emit('hit', `${coord[0]},${coord[1]}`);
             // socket.emit('game ended', `win`);
             // socket.emit('game ended', `loss`);
             // game.player2.socket.emit('game invite', `${game.player1.name}`);
             // TODO responses
+
 
         });
 
@@ -98,6 +99,12 @@ function server(io) {
             }
         });
 
+        socket.on("scoreboard", () => {
+            PlayerStats.scoreboard().then(scoreboard => {
+                socket.emit('scoreboard', `There is no game associated with user ${JSON.stringify(scoreboard)}.`);
+            });
+        });
+
         socket.on("cancel", (name) => {
             if (users[name] !== null) {
                 let game = games[socket.id];
@@ -121,9 +128,7 @@ function server(io) {
 
         socket.on('play', function (msg) {
 
-            console.log('new game!: ' + msg);
             let argArray = msg.split(" ");
-            console.log(argArray)
             let fieldSize = null;
             let shipsNum = null;
             let opponent = null;
@@ -178,5 +183,13 @@ function server(io) {
         });
     });
 }
+
+// TODO uložení
+// PlayerStats.load(game.player1.name).then(stats => {
+//
+//     stats.gamesPlayed += 1;
+//     console.log(stats)
+//     stats.saveStats()
+// });
 
 module.exports = server
