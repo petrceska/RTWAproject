@@ -8,6 +8,7 @@ class Field {
         }
         this.fieldSize = fieldSize;
         this.field = Array.from(Array(fieldSize), () => new Array(fieldSize).fill(0));
+        this.setPossibleShips = fieldSize;
         this.ships = [];
     }
 
@@ -15,6 +16,22 @@ class Field {
         this.ships = ships;
         this.shipsNum = this.ships.length;
         this.currentShipsNum = this.shipsNum;
+    }
+
+    set setPossibleShips(fieldSize) {
+        if (fieldSize <= 8) {
+            this.setPossibleTypeNumbers(3, 3, 1);
+        } else if (fieldSize <= 10) {
+            this.setPossibleTypeNumbers(4, 4, 2);
+        } else if (fieldSize <= 12) {
+            this.setPossibleTypeNumbers(5, 5, 2);
+        } else if (fieldSize <= 15) {
+            this.setPossibleTypeNumbers(4, 4, 2, 2, 1);
+        } else if (fieldSize <= 17) {
+            this.setPossibleTypeNumbers(5, 5, 2, 2, 2);
+        } else {
+            this.setPossibleTypeNumbers(5, 5, 4, 2, 2);
+        }
     }
 
     get getShips() {
@@ -193,33 +210,47 @@ class Field {
     }
 
     randomlyFillShips() {
-        let ship = new Ship("2x1");
-        let sheep = new Ship("2x1");
-        let lodka = new Ship("2x1");
-        let lambada = new Ship("1x2");
-        let lodka_v_mori = new Ship("1x2");
-        let sombrero = new Ship("3x1");
-        let aurora = new Ship("3x1");
-        let parnik = new Ship("3x1");
-        let laparadise = new Ship("1x3");
-        let clun = new Ship("1x3");
-        let moskva = new Ship("4x1");
-        let torpednik = new Ship("4x1");
-        let bitevnik = new Ship("2x2");
-        let moskva_na_dne = new Ship("3x2");
-        let kriznik = new Ship("2x3");
+        let ship2x1 = new Ship("2x1");
+        let sheep2x1 = new Ship("2x1");
+        let lodka2x1 = new Ship("2x1");
+        let lambada1x2 = new Ship("1x2");
+        let lodka_v_mori1x2 = new Ship("1x2");
+        let sombrero3x1 = new Ship("3x1");
+        let aurora3x1 = new Ship("3x1");
+        let parnik3x1 = new Ship("3x1");
+        let laparadise1x3 = new Ship("1x3");
+        let clun1x3 = new Ship("1x3");
+        let moskva4x1 = new Ship("4x1");
+        let torpednik4x1 = new Ship("4x1");
+        let torpednik1x4 = new Ship("1x4");
+        let bitevnik2x2 = new Ship("2x2");
+        let moskva_na_dne3x2 = new Ship("3x2");
+        let kriznik2x3 = new Ship("2x3");
         if (this.fieldSize <= 8) {
-            this.setFieldShips = [ship];
+            this.setPossibleTypeNumbers(3, 3, 1);
+            this.setFieldShips = [ship2x1, lambada1x2, lodka_v_mori1x2, sombrero3x1, laparadise1x3,
+                aurora3x1, torpednik1x4];
         } else if (this.fieldSize <= 10) {
-            this.setFieldShips = [ship, sheep, lambada, lodka_v_mori, sombrero, clun, aurora, moskva, laparadise];
+            this.setPossibleTypeNumbers(4, 4, 2);
+            this.setFieldShips = [ship2x1, sheep2x1, lambada1x2, lodka_v_mori1x2, sombrero3x1,
+                clun1x3, moskva4x1, torpednik1x4];
         } else if (this.fieldSize <= 12) {
-            this.setFieldShips = [ship, sheep, kriznik, lodka_v_mori, sombrero, clun, parnik, lambada, aurora, moskva, torpednik];
+            this.setPossibleTypeNumbers(5, 5, 2);
+            this.setFieldShips = [ship2x1, sheep2x1, lambada1x2, lodka2x1, lodka_v_mori1x2, sombrero3x1,
+                clun1x3, aurora3x1, parnik3x1, laparadise1x3, moskva4x1, torpednik1x4];
         } else if (this.fieldSize <= 15) {
-            this.setFieldShips = [ship, sheep, kriznik, lodka, lodka_v_mori, sombrero, clun, parnik, lambada, aurora, moskva, torpednik];
+            this.setPossibleTypeNumbers(4, 4, 2, 2, 1);
+            this.setFieldShips = [ship2x1, sheep2x1, kriznik2x3, lodka2x1, lodka_v_mori1x2,
+                sombrero3x1, clun1x3, parnik3x1, lambada1x2, aurora3x1, moskva4x1, torpednik4x1];
         } else if (this.fieldSize <= 17) {
-            this.setFieldShips = [ship, sheep, kriznik, lodka, lodka_v_mori, sombrero, bitevnik, clun, parnik, lambada, aurora, moskva, torpednik];
+            this.setPossibleTypeNumbers(5, 5, 2, 2, 2);
+            this.setFieldShips = [ship2x1, sheep2x1, kriznik2x3, lodka2x1, lodka_v_mori1x2,
+                sombrero3x1, bitevnik2x2, clun1x3, parnik3x1, lambada1x2, aurora3x1, moskva4x1, torpednik4x1];
         } else {
-            this.setFieldShips = [ship, sheep, kriznik, lodka, lodka_v_mori, sombrero, bitevnik, clun, parnik, lambada, aurora, moskva, torpednik, moskva_na_dne];
+            this.setPossibleTypeNumbers(5, 5, 4, 2, 2);
+            this.setFieldShips = [ship2x1, sheep2x1, kriznik2x3, lodka2x1, lodka_v_mori1x2,
+                sombrero3x1, bitevnik2x2, clun1x3, parnik3x1, lambada1x2, aurora3x1, moskva4x1, torpednik4x1,
+                moskva_na_dne3x2];
         }
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].width === 1) {
@@ -333,6 +364,10 @@ class Field {
     putShipToField(type, x, y) {
         let ship = new Ship(type);
         let position = [];
+        if (this.possibleShips[type] === 0) {
+            console.log("It is not possible to put this type of ship to the");
+            return -1;
+        }
         if (x + ship.width >= this.fieldSize || y + ship.len >= this.fieldSize) {
             console.log("It is not possible to put ship in chosen position, it would be put out of the field.");
             return -1;
@@ -357,13 +392,75 @@ class Field {
                 for (let i = 0; i < position.length; i++) {
                     this.setValueInField(position[i][0], position[i][1], 1);
                 }
-                console.log("ship.position[0]");
-                console.log(ship.position[0]);
+                console.log("--ship--]");
+                console.log(ship);
                 this.addShip(ship);
+                this.countShipTypes(ship.type);
             }
         } else {
             console.log("It is not possible to put ship to position: [%d,%d].", x, y);
             return -1;
+        }
+    }
+
+    setPossibleTypeNumbers(size2x1 = 4, size3x1 = 2, size4x1 = 2, size2x2 = 0, size3x2 = 0) {
+        this.possibleShips = {
+            "2x1": size2x1,
+            "3x1": size3x1,
+            "4x1": size4x1,
+            "2x2": size2x2,
+            "3x2": size3x2,
+        };
+    }
+
+    countShipTypes(type) {
+        switch (type) {
+            case "2x1":
+            case "1x2":
+                if (this.possibleShips["2x1"] > 0) {
+                    this.possibleShips["2x1"] -= 1;
+                } else {
+                    console.log("You are not able to use more 2x1 or 1x2 ships.");
+                    return -1;
+                }
+                break;
+            case "3x1":
+            case "1x3":
+                if (this.possibleShips["3x1"] > 0) {
+                    this.possibleShips["3x1"] -= 1;
+                } else {
+                    console.log("You are not able to use more 3x1 or 1x3 ships.");
+                    return -1;
+                }
+                break;
+            case "4x1":
+            case "1x4":
+                if (this.possibleShips["4x1"] > 0) {
+                    this.possibleShips["4x1"] -= 1;
+                } else {
+                    console.log("You are not able to use more 4x1 or 1x4 ships.");
+                    return -1;
+                }
+                break;
+            case "2x2":
+                if (this.possibleShips["2x2"] > 0) {
+                    this.possibleShips["2x2"] -= 1;
+                } else {
+                    console.log("You are not able to use more 2x2 ships.");
+                    return -1;
+                }
+                break;
+            case "3x2":
+            case "2x3":
+                if (this.possibleShips["3x2"] > 0) {
+                    this.possibleShips["3x2"] -= 1;
+                } else {
+                    console.log("You are not able to use more 3x2 or 2x3 ships.");
+                    return -1;
+                }
+                break;
+            default:
+                return;
         }
     }
 
