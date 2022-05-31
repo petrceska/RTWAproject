@@ -126,9 +126,13 @@ form button {
 }
 
 .turn{
-    border-color: red;
+    border-color: darkred;
+}
+
+.ship{
+    background-color: darkred;
 }
 
 .error-message{
-    color: red;
+    color: orangered;
 }

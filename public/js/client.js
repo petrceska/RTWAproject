@@ -65,7 +65,7 @@ $(function () {
 
             } else if (commandValue.startsWith("help")) {
                 $('#messages').append($('<li>').html(
-                    "Start game: play [array={num}] [ships={num}] [opponent={nickname}] <br>" +
+                    "Start game: play [array={num}] [opponent={nickname}] <br>" +
                     "Accept received invitation for a game: accept opponent={nickname} <br>" +
                     "Decline received invitation for a game: decline opponent={nickname} <br>" +
                     "Cancel sent game invitation: cancel opponent={nickname} <br>" +
@@ -83,8 +83,7 @@ $(function () {
             command.val('');
             return false;
         }
-    )
-    ;
+    );
 
     // ------------------------------------------------------------------------ INCOMING
 
@@ -101,18 +100,32 @@ $(function () {
     socket.on('scoreboard', function (msg) {
         console.log("socket.on('scoreboard'");
         let json = JSON.parse(msg);
-
         let table = `<table class="scoreboard"><tr><th>Rank</th><th>Name</th><th>Games won</th><th>Games played</th><th>Score</th></tr>`;
+
         json.forEach((player, i) => {
-
             table += `<tr><td>${i + 1}</td><td>${player.name}</td><td>${player.gamesWon}</td><td>${player.gamesPlayed}</td><td>${player.score}</td></tr>`;
-
         })
-
         table += "</table>";
 
         $('#messages').append($('<li>').html(`<h3>Scoreboard</h3> ${table}`));
+    });
 
+    socket.on('render ships', function (msg) {
+        console.log("socket.on('render ships'");
+        let json = JSON.parse(msg);
+
+        json.forEach((coord, i) => {
+            $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
+        })
+    });
+
+    socket.on('ships sank', function (msg) {
+        console.log("socket.on('render ships'");
+        let json = JSON.parse(msg);
+
+        json.forEach((coord, i) => {
+            $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
+        })
     });
 
     socket.on('stats', function (msg) {
@@ -237,9 +250,6 @@ $(function () {
             switch (arg[0]) {
                 case "field":
                     fieldSize = parseInt(arg[1]);
-                    break;
-                case "ships":
-                    console.log(arg[1]);
                     break;
                 case "yourTurn":
                     $('#field-player').addClass("turn");

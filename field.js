@@ -42,21 +42,20 @@ class Field {
     }
 
     checkDestroyedShips() {
-        let destroyedShip = null;
         for (let i = 0; i < this.ships.length; i++) {
             let ship = this.ships[i];
-            let destroyed = isShipDestroyed(ship);
-            if (destroyed) {
-                destroyedShip = ship;
+
+            if(this.isShipDestroyed(ship)){
+                return ship;
             }
         }
-        return destroyedShip;
+        return null;
     }
 
     isShipDestroyed(ship) {
         let count = 0;
         for (let i = 0; i < this.ship.position.length; i++) {
-            coordinates = this.ship.position;
+            let coordinates = this.ship.position;
             let x = coordinates[i][0];
             let y = coordinates[i][1];
             if (this.field[x][y] === 2) {
@@ -211,7 +210,7 @@ class Field {
         let moskva_na_dne = new Ship("3x2");
         let kriznik = new Ship("2x3");
         if (this.fieldSize <= 8) {
-            this.setFieldShips = [ship, lambada, lodka_v_mori, sombrero, clun, aurora, moskva];
+            this.setFieldShips = [ship, lambada, lodka_v_mori, sombrero];
         } else if (this.fieldSize <= 10) {
             this.setFieldShips = [ship, sheep, lambada, lodka_v_mori, sombrero, clun, aurora, moskva, laparadise];
         } else if (this.fieldSize <= 12) {
@@ -369,6 +368,18 @@ class Field {
             return -1;
         }
     }
+
+    get coordOfAllShips(){
+        let coords = [];
+        this.ships.forEach(function (x){
+            x.position.forEach(function (i){
+                coords.push(i);
+            });
+        });
+        console.log(coords);
+        return JSON.stringify(coords)
+    }
+
 
 }
 

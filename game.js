@@ -31,10 +31,10 @@ class Game {
     shoot(x, y, socketId){
         let field;
         if (socketId === this.player1.socket.id){
-            field = this.player1.field;
+            field = this.player2.field;
             this.player1Turn = false;
         }else{
-            field = this.player2.field;
+            field = this.player1.field;
             this.player1Turn = true;
         }
 
@@ -46,6 +46,13 @@ class Game {
             return false;
 
         }
+    }
+
+    checkDestroyedShips(){
+        if(this.player1Turn){
+            return this.player1.field.checkDestroyedShips()
+        }
+        return this.player2.field.checkDestroyedShips()
     }
 
     get randomPosition() {
