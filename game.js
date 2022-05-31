@@ -48,7 +48,7 @@ class Game {
     }
 
     checkSankShips(socket) {
-        if (this.player1.socket.id === socket.id) {
+        if (socket !== null && this.player1.socket.id === socket.id) {
             return this.player2.field.checkDestroyedShips()
         }
         return this.player1.field.checkDestroyedShips()
@@ -59,7 +59,10 @@ class Game {
             if (this.player2.field.currentShipsNum === 0) {
                 this.winner = this.player1;
                 socket.emit('game ended', 'win');
-                this.player2.socket.emit('game ended', 'loss');
+
+                if (this.player2.socket !== null){
+                    this.player2.socket.emit('game ended', 'loss');
+                }
             }
         } else {
             if (this.player1.field.currentShipsNum === 0) {

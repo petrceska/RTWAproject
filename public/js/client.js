@@ -55,6 +55,8 @@ $(function () {
 
             } else if (commandValue.startsWith("scoreboard")) {
                 socket.emit('scoreboard');
+            } else if (commandValue.startsWith("random ships")) {
+                socket.emit('random ships');
 
             } else if (commandValue.startsWith("stats")) {
                 commandValue = commandValue.replace('stats', '').trim();
@@ -71,6 +73,7 @@ $(function () {
                     "Cancel sent game invitation: cancel opponent={nickname} <br>" +
                     "Shoot at some position: shoot {A-Z }{1-25} <br>" +
                     "Place your ship at some position: ship {shipname} {A-Z}{1-25} <br>" +
+                    "Place your ships randomly: random ships <br>" +
                     "Show scoreboard: scoreboard <br>" +
                     "Show my statistics: stats <br>" +
                     "Show statistics for another player: stats {nickname}<br>"
@@ -316,12 +319,15 @@ $(function () {
         for (let i in argArray) {
             let arg = argArray[i].split("=");
 
+            $('#field-opponent').addClass("turn");
+            $('#field-player').removeClass("turn");
             switch (arg[0]) {
                 case "field":
                     fieldSize = parseInt(arg[1]);
                     break;
                 case "yourTurn":
                     $('#field-player').addClass("turn");
+                    $('#field-opponent').removeClass("turn");
                     break;
                 default:
                     $('#messages').append($('<li>').text(`There is something wrong with argument while creating game: "${argArray[i]}"`));

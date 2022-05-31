@@ -1,14 +1,7 @@
 const Game = require("./game");
 const PlayerStats = require("./PlayerStats");
-const Console = require("console");
 let users = [];
 let games = [];
-
-// --------------------------------------------------------------------------------------------------------------
-function evaluateGame(game) {
-    let ps1 = loadStats(game.player1.name)
-    let ps2 = loadStats(game.player2.name)
-}
 
 // --------------------------------------------------------------------------------------------------------------
 
@@ -26,10 +19,9 @@ function server(io) {
                 console.log('returning user: ' + name + ' (after a client refresh). Welcome back!');
 
                 let game = games[name];
-                console.log(game);
-                console.log(socket.id);
-                console.log(games);
+
                 if (game !== null && game !== undefined){
+
                     let player;
                     let opponent;
                     if (game.player1.name === name){
@@ -41,6 +33,11 @@ function server(io) {
                         player = game.player2;
                         opponent = game.player1;
                     }
+
+                    if(player.name === name){ //bind new socket
+                        player.socket = socket;
+                    }
+
                     socket.emit('render ships', "player=" + player.field.coordOfAllShips);
                     socket.emit('render misses', "player=" + player.field.coordsOfAllMisses + " opponent=" + opponent.field.coordsOfAllMisses);
                     socket.emit('render hits', "player=" + player.field.coordsOfAllHits + " opponent=" + opponent.field.coordsOfAllHits);
@@ -155,7 +152,26 @@ function server(io) {
 
         });
 
-        socket.on("decline", name => removeInvite(name));
+        socket.on("decline", function(name) {
+            if (users[name] !== null) {
+                let game = games[getKeyByValue(users, socket)];
+                if (game == null) {
+                    socket.emit('error', `There is no game associated with user ${name}.`);
+                    return
+                }
+
+                game.player1.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player2.name}")`);
+                delete games[game.player1.name]
+
+                if (game.multiplayer) {
+                    game.player2.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player1.name}")`);
+                    delete games[game.player2.name]
+                }
+
+            } else {
+                socket.emit('error', `There is no game associated with user ${name}.`);
+            }
+        });
 
         socket.on("accept", (name) => {
             if (users[name] !== null) {
@@ -165,8 +181,8 @@ function server(io) {
                     return
                 }
                 game.start = new Date();
-                game.player1.socket.emit('construct game', `field=${game.fieldSize} yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
-                game.player2.socket.emit('construct game', `field=${game.fieldSize}`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                game.player1.socket.emit('construct game', `field=${game.fieldSize} yourTurn`);
+                game.player2.socket.emit('construct game', `field=${game.fieldSize}`);
                 //TODO create objects and start game
 
             } else {
@@ -186,7 +202,26 @@ function server(io) {
             });
         });
 
-        socket.on("cancel", name => removeInvite(name));
+        socket.on("cancel", function removeInvite(name) {
+            if (users[name] !== null) {
+                let game = games[getKeyByValue(users, socket)];
+                if (game == null) {
+                    socket.emit('error', `There is no game associated with user ${name}.`);
+                    return
+                }
+
+                game.player1.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player2.name}")`);
+                delete games[game.player1.name]
+
+                if (game.multiplayer) {
+                    game.player2.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player1.name}")`);
+                    delete games[game.player2.name]
+                }
+
+            } else {
+                socket.emit('error', `There is no game associated with user ${name}.`);
+            }
+        });
 
         socket.on('play', function (msg) {
 
@@ -213,19 +248,23 @@ function server(io) {
                 }
             }
 
-            if (opponent == null) {
-                let username = getKeyByValue(users, socket);
+            let username = getKeyByValue(users, socket);
 
+            if (opponent == null) {
                 let game = Game.createSingleplayer(username, socket, fieldSize);
                 game.start = new Date();
                 game.player1.field.randomlyFillShips()
                 game.player2.field.randomlyFillShips()
-                console.log(game.player2.field.coordOfAllShips)
                 games[username] = game
-                socket.emit('construct game', `field=${game.fieldSize} yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
-                socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                socket.emit('construct game', `field=${game.fieldSize} yourTurn`);
+                socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
 
             } else {
+                if (opponent === username){
+                    socket.emit('error', `Playing with yourself? too easy :).`);
+                    return;
+                }
+
                 let opponentSocket = users[opponent]
                 if (!opponent in users || opponentSocket == null) {
                     socket.emit('error', `There is no user with nickname "${opponent}"`);
@@ -241,31 +280,24 @@ function server(io) {
             }
         });
 
+        socket.on("random ships", () => {
+            let username = getKeyByValue(users, socket);
+            let game = games[username];
+
+            if (game.player1.name === username){
+                game.player1.field.randomlyFillShips()
+                socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
+            }else if(game.player2.name === username){
+                game.player2.field.randomlyFillShips()
+                socket.emit('render ships', "player=" + game.player2.field.coordOfAllShips);
+
+            }
+        });
+
         socket.on('disconnect', function () {
             console.log('user disconnected');
         });
     });
-}
-
-function removeInvite(name) {
-    if (users[name] !== null) {
-        let game = games[getKeyByValue(users, socket)];
-        if (game == null) {
-            socket.emit('error', `There is no game associated with user ${name}.`);
-            return
-        }
-
-        game.player1.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player2.name}")`);
-        delete games[game.player1.name]
-
-        if (game.multiplayer) {
-            game.player2.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player1.name}")`);
-            delete games[game.player2.name]
-        }
-
-    } else {
-        socket.emit('error', `There is no game associated with user ${name}.`);
-    }
 }
 
 
