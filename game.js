@@ -11,11 +11,16 @@ class Game {
     constructor(player1, player2, socket1, socket2, type, fieldSize = 10) {
         this.player1 = new Player(player1, socket1, new Field(fieldSize));
         this.player2 = new Player(player2, socket2, new Field(fieldSize));
+        this.player1Turn= true;
         this.multiplayer = type;
         this.singleplayer = !type;
         this.winner = null;
         this.start = null;
         this.end = null;
+    }
+
+    myTurn(id){
+        return (this.player1.socket.id === id && this.player1Turn) || (this.player2.socket.id === id && !this.player1Turn);
     }
 
 }

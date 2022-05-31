@@ -33,12 +33,13 @@ form button {
 #messages {
     list-style-type: none;
     border-top: black 3px solid;
-    margin: 0;
     padding: 0;
     width: 100%;
     position: absolute;
     top: 550px;
     overflow: scroll;
+    height: calc(100% - 575px);
+    margin: 0 0 35px;
 }
 
 #messages li {
@@ -67,21 +68,21 @@ form button {
 .field tr td {
     border: 1px solid black;
     margin: 0;
-    width: 19px;
-    height: 19px;
+    width: 18px;
+    height: 18px;
 }
 
 .field tr td:first-child, .field tr:first-child td {
     background-color: gray;
 }
 
-#quitBtn{
+#quitBtn {
     position: absolute;
     top: 5px;
     right: 5px;
 }
 
-#left-div{
+#left-div {
     float: left;
     width: 50%;
     height: 550px;
@@ -89,7 +90,8 @@ form button {
     text-align: center;
     border-right: 1px black solid;
 }
-#right-div{
+
+#right-div {
     float: right;
     width: 50%;
     height: 550px;
@@ -98,12 +100,31 @@ form button {
     border-left: 1px black solid;
 }
 
-#field-player{
+#field-player {
     margin-right: 20px;
     float: right;
 }
 
-#field-opponent{
+#field-opponent {
     margin-left: 20px;
     float: left;
+}
+
+.scoreboard{
+    text-align: center;
+    vertical-align: center;
+}
+
+.scoreboard tr td{
+    padding: 3px 20px;
+    border-bottom: 1px solid black;
+}
+
+.scoreboard tr th{
+    padding: 4px 20px;
+    border-bottom: 3px solid black;
+}
+
+.turn{
+    border-color: red;
 }

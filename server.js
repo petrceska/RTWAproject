@@ -21,6 +21,7 @@ function server(io) {
         console.log('a user connected');
 
         socket.on("it's me", (name) => {
+            name = name.toLowerCase()
             if (name !== null || users[name] !== null) {
                 console.log('returning user: ' + name + ' (after a client refresh). Welcome back!');
             } else {
@@ -43,16 +44,22 @@ function server(io) {
                 coord = msg.split(",");
 
                 if (coord == null || coord[0] == null || coord[1] == null) {
-                    socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
+                    socket.emit('error', `You can not shoot at position: "${msg}"`);
                 }
             } catch (e) {
-                socket.emit('wrong parameters', `You can not shoot at position: "${msg}"`);
+                socket.emit('error', `You can not shoot at position: "${msg}"`);
             }
 
             let game = games[socket.id];
             if (game == null) {
                 socket.emit('message', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
                 return
+            }
+
+            if (game.myTurn(socket.id)){
+
+            }else{
+                socket.emit('not your turn');
             }
             // socket.emit('miss', `${coord[0]},${coord[1]}`);
             // socket.emit('hit', `${coord[0]},${coord[1]}`);
@@ -93,7 +100,7 @@ function server(io) {
                     return
                 }
                 game.start = new Date();
-                game.player1.socket.emit('construct game', `field=10 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                game.player1.socket.emit('construct game', `field=10 ships=6 yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
                 game.player2.socket.emit('construct game', `field=10 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
                 //TODO create objects and start game
 
@@ -104,7 +111,13 @@ function server(io) {
 
         socket.on("scoreboard", () => {
             PlayerStats.scoreboard().then(scoreboard => {
-                socket.emit('scoreboard', `There is no game associated with user ${JSON.stringify(scoreboard)}.`);
+                socket.emit('scoreboard', JSON.stringify(scoreboard));
+            });
+        });
+
+        socket.on("stats", (name) => {
+            PlayerStats.load(name).then(stats => {
+                socket.emit('stats', JSON.stringify(stats));
             });
         });
 
@@ -153,7 +166,7 @@ function server(io) {
                             break;
                         default:
                             console.log("emit");
-                            socket.emit('wrong parameters', `There is something wrong with argument "${argArray[i]}"`);
+                            socket.emit('error', `There is something wrong with argument "${argArray[i]}"`);
                             return;
                     }
                 }
@@ -163,12 +176,12 @@ function server(io) {
                 let game = Game.createSingleplayer(getKeyByValue(users, socket), socket, fieldSize);
                 game.start = new Date();
                 games[socket.id] = game
-                socket.emit('construct game', `field=25 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                socket.emit('construct game', `field=25 ships=6 yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
 
             } else {
                 let opponentSocket = users[opponent]
                 if (!opponent in users || opponentSocket == null) {
-                    socket.emit('wrong parameters', `There is no user with nickname "${opponent}"`);
+                    socket.emit('error', `There is no user with nickname "${opponent}"`);
                     return;
                 }
 
