@@ -267,7 +267,7 @@ class Field {
 
     putShipToField(type, x, y) {
         ship = new Ship(type);
-        this.checkShipPosition(x, y)
+        this.checkShipPosition(x, y);
     }
 
 }
