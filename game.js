@@ -9,6 +9,11 @@ class Game {
     }
 
     constructor(player1, player2, socket1, socket2, type, fieldSize = 10) {
+        this.fieldSize = fieldSize;
+        if (fieldSize == null){
+            this.fieldSize = 10;
+        }
+
         this.player1 = new Player(player1, socket1, new Field(fieldSize));
         this.player2 = new Player(player2, socket2, new Field(fieldSize));
         this.player1Turn= true;
@@ -43,6 +48,9 @@ class Game {
         }
     }
 
+    get randomPosition() {
+        return Math.round(Math.random() * this.fieldSize);
+    }
 }
 
 class Player {

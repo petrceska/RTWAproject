@@ -50,19 +50,27 @@ function server(io) {
                 socket.emit('error', `You can not shoot at position: "${msg}"`);
             }
 
-            let game = games[socket.id];
+            let game = games[socket.id]; //TODO existuje hra -> načist novou
             if (game == null) {
-                socket.emit('message', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
+                socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
                 return
             }
 
-            if (game.singleplayer){
+            if (game.singleplayer){ //TODO better AI
                 if (game.shoot(coord[0], coord[1], socket.id)) {
                     socket.emit('hit', `${coord[0]},${coord[1]}`);
                 }else {
                     socket.emit('miss', `${coord[0]},${coord[1]}`);
                 }
-
+                let x = game.randomPosition
+                let y = game.randomPosition
+                console.log(x,y);
+                if (game.shoot(x, y, null)) { // AI is shooting
+                    socket.emit('opponent hit', `${x},${y}`);
+                }else {
+                    socket.emit('opponent miss', `${x},${y}`);
+                }
+                return;
             }
 
             if (game.multiplayer) {
@@ -80,9 +88,9 @@ function server(io) {
                         socket.emit('miss', `${coord[0]},${coord[1]}`);
                         opponentSocket.emit('opponent miss', `${coord[0]},${coord[1]}`);
                     }
+                }else {
+                    socket.emit('not your turn');
                 }
-            } else {
-                socket.emit('not your turn');
             }
             // socket.emit('game ended', `win`);
             // socket.emit('game ended', `loss`);
@@ -96,7 +104,7 @@ function server(io) {
             if (users[name] !== null) {
                 let game = games[socket.id];
                 if (game == null) {
-                    socket.emit('message', `There is no game associated with user ${name}.`);
+                    socket.emit('error', `There is no game associated with user ${name}.`);
                     return
                 }
 
@@ -109,7 +117,7 @@ function server(io) {
                 }
 
             } else {
-                socket.emit('message', `There is no game associated with user ${name}.`);
+                socket.emit('error', `There is no game associated with user ${name}.`);
             }
         });
 
@@ -117,16 +125,16 @@ function server(io) {
             if (users[name] !== null) {
                 let game = games[socket.id];
                 if (game == null) {
-                    socket.emit('message', `There is no game associated with user ${name}.`);
+                    socket.emit('error', `There is no game associated with user ${name}.`);
                     return
                 }
                 game.start = new Date();
-                game.player1.socket.emit('construct game', `field=10 ships=6 yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
-                game.player2.socket.emit('construct game', `field=10 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                game.player1.socket.emit('construct game', `field=${game.fieldSize} yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                game.player2.socket.emit('construct game', `field=${game.fieldSize}`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
                 //TODO create objects and start game
 
             } else {
-                socket.emit('message', `There is no game associated with user ${name}.`);
+                socket.emit('error', `There is no game associated with user ${name}.`);
             }
         });
 
@@ -146,7 +154,7 @@ function server(io) {
             if (users[name] !== null) {
                 let game = games[socket.id];
                 if (game == null) {
-                    socket.emit('message', `There is no game associated with user ${name}.`);
+                    socket.emit('error', `There is no game associated with user ${name}.`);
                     return
                 }
 
@@ -159,14 +167,14 @@ function server(io) {
                 }
 
             } else {
-                socket.emit('message', `There is no game associated with user ${name}.`);
+                socket.emit('error', `There is no game associated with user ${name}.`);
             }
         });
 
         socket.on('play', function (msg) {
 
             let argArray = msg.split(" ");
-            let fieldSize = null;
+            let fieldSize = 10;
             let shipsNum = null;
             let opponent = null;
             for (let i in argArray) {
@@ -197,7 +205,7 @@ function server(io) {
                 let game = Game.createSingleplayer(getKeyByValue(users, socket), socket, fieldSize);
                 game.start = new Date();
                 games[socket.id] = game
-                socket.emit('construct game', `field=25 ships=6 yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                socket.emit('construct game', `field=${game.fieldSize} yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
 
             } else {
                 let opponentSocket = users[opponent]

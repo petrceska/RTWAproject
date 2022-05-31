@@ -89,10 +89,17 @@ $(function () {
     // ------------------------------------------------------------------------ INCOMING
 
     socket.on('chat message', function (msg) {
+        console.log("socket.on('chat message'");
         $('#messages').append($('<li>').text(msg));
     });
 
+    socket.on('error', function (msg) {
+        console.log("socket.on('error'");
+        $('#messages').append($('<li>').text(msg).addClass("error-message"));
+    });
+
     socket.on('scoreboard', function (msg) {
+        console.log("socket.on('scoreboard'");
         let json = JSON.parse(msg);
 
         let table = `<table class="scoreboard"><tr><th>Rank</th><th>Name</th><th>Games won</th><th>Games played</th><th>Score</th></tr>`;
@@ -109,6 +116,7 @@ $(function () {
     });
 
     socket.on('stats', function (msg) {
+        console.log("socket.on('stats'");
         let json = JSON.parse(msg);
 
         let table = `<table class="scoreboard"><tr><th>Name</th><th>Games won</th><th>Games played</th><th>Score</th></tr>`
@@ -120,58 +128,64 @@ $(function () {
     });
 
     socket.on('hit', function (msg) {
+        console.log("socket.on('hit'");
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
             $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
             return
         }
-        $(`#field-opponent .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('O')
+        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text('O');
 
         $('#field-player').toggleClass("turn");
         $('#field-opponent').toggleClass("turn");
     });
 
     socket.on('miss', function (msg) {
+        console.log("socket.on('miss'");
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
             $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
             return
         }
-        $(`#field-opponent .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('X')
 
+        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text('X');
         $('#field-player').toggleClass("turn");
         $('#field-opponent').toggleClass("turn");
     });
 
     socket.on('opponent miss', function (msg) {
+        console.log("socket.on('opponent miss'");
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
             $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
             return
         }
-        $(`#field-player .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('X')
+
+        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text('X');
 
         $('#field-player').toggleClass("turn");
         $('#field-opponent').toggleClass("turn");
     });
 
     socket.on('opponent hit', function (msg) {
+        console.log("socket.on('opponent hit'");
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
             $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
             return
         }
-        $(`#field-player .row:nth-child(${coord[0]}) .col:nth-child(${coord[1]})`).text('O')
+        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text('O');
 
         $('#field-player').toggleClass("turn");
         $('#field-opponent').toggleClass("turn");
     });
 
     socket.on('game invite', function (msg) {
+        console.log("socket.on('game invite'");
         let coord = msg.split("=");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -182,10 +196,12 @@ $(function () {
     });
 
     socket.on('invite deleted', function (msg) {
+        console.log("socket.on('invite deleted'");
         $('#messages').append($('<li>').text(msg));
     });
 
     socket.on('waiting for opponent', function (msg) {
+        console.log("socket.on('waiting for opponent'");
         let coord = msg.split("=");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -196,17 +212,20 @@ $(function () {
     });
 
     socket.on('wrong parameters', function (msg) {
+        console.log("socket.on('wrong parameters'");
         $('#messages').append($('<li class="error">').text(msg));
     });
 
     socket.on('not your turn', function () {
-        $('#messages').append($('<li class="error">').text("Its not your turn. You have to wait for opponent to play."));
+        console.log("socket.on('not your turn");
+        $('#messages').append($('<li class="error">').text("It is not your turn. You have to wait for opponent to play."));
 
         $('#field-player').removeClass("turn");
         $('#field-opponent').addClass("turn");
     });
 
     socket.on('construct game', function (params) {
+        console.log("socket.on('construct game'");
         let fieldSize = 10;
         console.log(params);
 
@@ -255,6 +274,7 @@ $(function () {
     });
 
     socket.on('game ended', function (param) {
+        console.log("socket.on('game ended'");
 
         switch (param) {
             case "win":
@@ -294,6 +314,7 @@ $(function () {
                 return null
             }
         }
+        console.log(`${row},${col}`);
         return `${row},${col}`
     }
 
