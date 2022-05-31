@@ -192,17 +192,17 @@ class Field {
         let moskva_na_dne = new Ship("3x2");
         let kriznik = new Ship("2x3");
         if (this.fieldSize <= 8) {
-            ships.push(ship, lambada, lodka_v_mori, sombrero, clun, aurora, moskva);
+            this.ships.push(ship, lambada, lodka_v_mori, sombrero, clun, aurora, moskva);
         } else if (this.fieldSize <= 10) {
-            ships.push(ship, sheep, lambada, lodka_v_mori, sombrero, clun, aurora, moskva, laparadise);
+            this.ships.push(ship, sheep, lambada, lodka_v_mori, sombrero, clun, aurora, moskva, laparadise);
         } else if (this.fieldSize <= 12) {
-            ships.push(ship, sheep, kriznik, lodka_v_mori, sombrero, clun, parnik, lambada, aurora, moskva, torpednik);
+            this.ships.push(ship, sheep, kriznik, lodka_v_mori, sombrero, clun, parnik, lambada, aurora, moskva, torpednik);
         } else if (this.fieldSize <= 15) {
-            ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+            this.ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
         } else if (this.fieldSize <= 17) {
-            ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+            this.ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
         } else {
-            ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+            this.ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
         }
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].width === 1) {
