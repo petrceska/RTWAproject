@@ -110,20 +110,98 @@ $(function () {
         $('#messages').append($('<li>').html(`<h3>Scoreboard</h3> ${table}`));
     });
 
-    socket.on('render ships', function (msg) {
+    socket.on('render ships', function (params) {
         console.log("socket.on('render ships'");
-        let json = JSON.parse(msg);
+        let argArray = params.split(" ");
 
-        json.forEach((coord, i) => {
-            $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
-        })
+        for (let i in argArray) {
+            let arg = argArray[i].split("=");
+
+            switch (arg[0]) {
+                case "opponent":
+                    let opJson = JSON.parse(arg[1]);
+
+                    opJson.forEach((coord) => {
+                        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
+                    })
+                    break;
+                case "player":
+                    let pJson = JSON.parse(arg[1]);
+
+                    pJson.forEach((coord) => {
+                        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
+                    });
+                    break;
+                default:
+                    $('#messages').append($('<li>').text(`There is something wrong with argument: "${argArray[i]}"`));
+                    return;
+            }
+        }
     });
 
-    socket.on('ships sank', function (msg) {
+    socket.on('render hits', function (params) {
+        console.log("socket.on('render hits'");
+        let argArray = params.split(" ");
+
+        for (let i in argArray) {
+            let arg = argArray[i].split("=");
+
+            switch (arg[0]) {
+                case "opponent":
+                    let opJson = JSON.parse(arg[1]);
+
+                    opJson.forEach((coord) => {
+                        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text("O");
+                    })
+                    break;
+                case "player":
+                    let pJson = JSON.parse(arg[1]);
+
+                    pJson.forEach((coord) => {
+                        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text("O");
+                    });
+                    break;
+                default:
+                    $('#messages').append($('<li>').text(`There is something wrong with argument: "${argArray[i]}"`));
+                    return;
+            }
+        }
+    });
+
+    socket.on('render misses', function (params) {
+        console.log("socket.on('render misses'");
+        let argArray = params.split(" ");
+
+        for (let i in argArray) {
+            let arg = argArray[i].split("=");
+
+            switch (arg[0]) {
+                case "opponent":
+                    let opJson = JSON.parse(arg[1]);
+
+                    opJson.forEach((coord) => {
+                        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text("X");
+                    })
+                    break;
+                case "player":
+                    let pJson = JSON.parse(arg[1]);
+
+                    pJson.forEach((coord) => {
+                        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text("X");
+                    });
+                    break;
+                default:
+                    $('#messages').append($('<li>').text(`There is something wrong with argument: "${argArray[i]}"`));
+                    return;
+            }
+        }
+    });
+
+    socket.on('ship sank', function (msg) {
         console.log("socket.on('render ships'");
         let json = JSON.parse(msg);
 
-        json.forEach((coord, i) => {
+        json.forEach((coord) => {
             $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
         })
     });
