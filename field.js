@@ -1,3 +1,5 @@
+const Ship = require("./ship");
+
 class Field {
     constructor(fieldSize) {
         this.fieldSize = fieldSize;
@@ -261,6 +263,11 @@ class Field {
                 }
             }
         }
+    }
+
+    putShipToField(type, x, y) {
+        ship = new Ship(type);
+        this.checkShipPosition(x, y)
     }
 
 }
