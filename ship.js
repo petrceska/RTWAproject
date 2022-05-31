@@ -1,10 +1,8 @@
 class Ship {
-    constructor(type, position) {
-        this.type = type;
-        this.position = position;
+    constructor(type) {
+        this.setType = type;
         this.destroyed = false;
     }
-
 
     set setType(type) {
         this.type = type;
@@ -15,14 +13,18 @@ class Ship {
     changeShape(width = this.width, len = this.len) {
         if (width && len !== null) {
             // create array for 
-            this.position = Array.from(Array(len * width), () => Uint8Array(2));
+            this.position = Array.from(Array(len * width), () => new Uint8Array(2));
         }
     }
 
     changePosition(arrayOfPoints) {
         // for change position create empty array
-        this.position = Array.from(Array(this.len * this.width), () => Uint8Array(2));
-        this.position.push(arrayOfPoints);
+        this.position = Array.from(Array(this.len * this.width), () => new Uint8Array(2));
+        for (let i = 0; i < this.position.length; i++) {
+            this.position[i] = arrayOfPoints[i];
+        }
+        this.id = 1;
+        return this
     }
 
     shipSize(type) {
