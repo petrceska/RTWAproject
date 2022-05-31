@@ -8,7 +8,7 @@ class Field {
         }
         this.fieldSize = fieldSize;
         this.field = Array.from(Array(fieldSize), () => new Array(fieldSize).fill(0));
-        this.ships = null;
+        this.ships = [];
     }
 
     set setFieldShips(ships) {
@@ -27,6 +27,10 @@ class Field {
 
     static getRandomInt(min, max) {
         return Math.round(Math.random() * (max - min) + min);
+    }
+
+    addShip(ship) {
+        this.ships.push(ship);
     }
 
     shipHit(x, y) {
@@ -192,17 +196,17 @@ class Field {
         let moskva_na_dne = new Ship("3x2");
         let kriznik = new Ship("2x3");
         if (this.fieldSize <= 8) {
-            this.ships.push(ship, lambada, lodka_v_mori, sombrero, clun, aurora, moskva);
+            this.setFieldShips = [ship, lambada, lodka_v_mori, sombrero, clun, aurora, moskva];
         } else if (this.fieldSize <= 10) {
-            this.ships.push(ship, sheep, lambada, lodka_v_mori, sombrero, clun, aurora, moskva, laparadise);
+            this.setFieldShips = [ship, sheep, lambada, lodka_v_mori, sombrero, clun, aurora, moskva, laparadise];
         } else if (this.fieldSize <= 12) {
-            this.ships.push(ship, sheep, kriznik, lodka_v_mori, sombrero, clun, parnik, lambada, aurora, moskva, torpednik);
+            this.setFieldShips = [ship, sheep, kriznik, lodka_v_mori, sombrero, clun, parnik, lambada, aurora, moskva, torpednik];
         } else if (this.fieldSize <= 15) {
-            this.ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+            this.setFieldShips = [ship, sheep, kriznik, lodka, lodka_v_mori, sombrero, clun, parnik, lambada, aurora, moskva, torpednik];
         } else if (this.fieldSize <= 17) {
-            this.ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+            this.setFieldShips = [ship, sheep, kriznik, lodka, lodka_v_mori, sombrero, bitevnik, clun, parnik, lambada, aurora, moskva, torpednik];
         } else {
-            this.ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+            this.setFieldShips = [ship, sheep, kriznik, lodka, lodka_v_mori, sombrero, bitevnik, clun, parnik, lambada, aurora, moskva, torpednik, moskva_na_dne];
         }
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].width === 1) {
@@ -301,10 +305,10 @@ class Field {
             console.log("It is not possible to put ship in chosen position, it would be put out of the field.");
             return -1;
         }
-        if (this.checkShipPosition(x, y)) {
+        if (!this.checkShipPosition(x, y)) {
             for (let i = x; i < x + ship.width; i++) {
                 for (let j = y; j < y + ship.len; j++) {
-                    if (this.checkShipPosition(i, j) === 0) {
+                    if (!this.checkShipPosition(i, j)) {
                         this.saveIndexToArray(position, i, j);
                     }
                     else {
@@ -323,6 +327,9 @@ class Field {
                 for (let i = 0; i < position.length; i++) {
                     this.setValueInField(position[i][0], position[i][1], 1);
                 }
+                console.log("ship.position[0]");
+                console.log(ship.position[0]);
+                this.addShip(ship);
             }
         }
         else {
