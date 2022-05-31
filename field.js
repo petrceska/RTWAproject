@@ -176,6 +176,17 @@ class Field {
     }
 
     randomlyFillShips() {
+        let ship = new Ship("2x1");
+        let kriznik = new Ship("2x1");
+        let lambada = new Ship("2x1");
+        let lodka = new Ship("2x1");
+        let sombrero = new Ship("3x1");
+        let aurora = new Ship("3x1");
+        let parnik = new Ship("3x1");
+        let moskva = new Ship("4x1");
+        let torpednik = new Ship("4x1");
+        let bitevnik = new Ship("2x2");
+        ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].width === 1) {
                 let availablePlaces = [];
@@ -267,8 +278,40 @@ class Field {
     }
 
     putShipToField(type, x, y) {
-        ship = new Ship(type);
-        this.checkShipPosition(x, y);
+        let ship = new Ship(type);
+        let position = [];
+        if (x + ship.width >= this.fieldSize || y + ship.len >= this.fieldSize) {
+            console.log("It is not possible to put ship in chosen position, it would be put out of the field.");
+            return -1;
+        }
+        if (this.checkShipPosition(x, y)) {
+            for (let i = x; i < x + ship.width; i++) {
+                for (let j = y; j < y + ship.len; j++) {
+                    if (this.checkShipPosition(i, j) === 0) {
+                        this.saveIndexToArray(position, i, j);
+                    }
+                    else {
+                        console.log("děvečka");
+                        console.log("It is not possible to put ship to position: [%d,%d].", i, j);
+                        return -1;
+                    }
+                }
+            }
+            if (position.length !== 0) {
+                if (position.length !== (ship.len * ship.width)) {
+                    console.log("Position is not fitting this type of ship.");
+                    return -1;
+                }
+                ship.changePosition(position);
+                for (let i = 0; i < position.length; i++) {
+                    this.setValueInField(position[i][0], position[i][1], 1);
+                }
+            }
+        }
+        else {
+            console.log("It is not possible to put ship to position: [%d,%d].", x, y);
+            return -1;
+        }
     }
 
 }
