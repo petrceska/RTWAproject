@@ -41,19 +41,34 @@ class Field {
         this.field[x][y] = 2;
     }
 
+    checkDestroyedShips() {
+        let destroyedShip = null;
+        for (let i = 0; i < this.ships.length; i++) {
+            let ship = this.ships[i];
+            let destroyed = isShipDestroyed(ship);
+            if (destroyed) {
+                destroyedShip = ship;
+            }
+        }
+        return destroyedShip;
+    }
+
     isShipDestroyed(ship) {
         let count = 0;
-        ship.position.forEach(function (points, index) {
-            let x = points[0];
-            let y = points[1];
+        for (let i = 0; i < this.ship.position.length; i++) {
+            coordinates = this.ship.position;
+            let x = coordinates[i][0];
+            let y = coordinates[i][1];
             if (this.field[x][y] === 2) {
                 count++;
                 if (count === ship.position.length) {
                     ship.destroyed = true;
+                    this.currentShipsNum--;
                     return true;
                 }
             }
-        });
+        }
+
     }
 
     getAvailable1xXSpaces(arr = this.field) {
@@ -213,14 +228,25 @@ class Field {
                 let availablePlaces = [];
                 let fieldWidthPlaces = this.getAvailable1xXSpaces()[0];
                 for (let j = 0; j < fieldWidthPlaces.length; j++) {
-                    if (fieldWidthPlaces[j].length >= this.ships[i].width)
+                    if (fieldWidthPlaces[j].length >= this.ships[i].len)
                         availablePlaces.push(fieldWidthPlaces[j]);
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
+                console.log("!!!--------placeIndex---------!!!");
+                console.log(placeIndex);
+                console.log("available Length Places");
+                console.log(availablePlaces);
+                console.log("availablePlaces[placeIndex]");
+                console.log(availablePlaces[placeIndex]);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
-
+                console.log("----------this.ships[i]------------");
+                console.log(this.ships[i]);
+                console.log("slice");
+                console.log(slice);
+                console.log("this.ships[i].position.length");
+                console.log(this.ships[i].position.length);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
                     let x = this.ships[i].position[k][0];
                     let y = this.ships[i].position[k][1];
@@ -237,7 +263,15 @@ class Field {
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
+                console.log("----------this.ships[i]------------");
+                console.log(this.ships[i]);
+                console.log("slice");
+                console.log(slice);
+                console.log("this.ships[i].position.length");
+                console.log(this.ships[i].position.length);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
+                    console.log("this.ships[i].position[k][1]");
+                    console.log(this.ships[i].position[k][0]);
                     let x = this.ships[i].position[k][0];
                     let y = this.ships[i].position[k][1];
                     this.setValueInField(x, y, 1);
@@ -325,6 +359,8 @@ class Field {
                 for (let i = 0; i < position.length; i++) {
                     this.setValueInField(position[i][0], position[i][1], 1);
                 }
+                console.log("ship.position[0]");
+                console.log(ship.position[0]);
                 this.addShip(ship);
             }
         }
