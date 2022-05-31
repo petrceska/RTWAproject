@@ -58,6 +58,16 @@ class Field {
         this.field[x][y] = 3;
     }
 
+    stringifyTypeNames() {
+        /*
+        let arr = [];
+        for (var key in this.possibleShips) {
+            arr.push(key);
+        }
+        */
+        return JSON.stringify(["2x1", "1x2", "3x1", "1x3", "4x1", "1x4"]);
+    }
+
     checkDestroyedShips() {
         for (let i = 0; i < this.ships.length; i++) {
             let ship = this.ships[i];
@@ -401,6 +411,7 @@ class Field {
             console.log("It is not possible to put ship to position: [%d,%d].", x, y);
             return -1;
         }
+        return 0;
     }
 
     setPossibleTypeNumbers(size2x1 = 4, size3x1 = 2, size4x1 = 2, size2x2 = 0, size3x2 = 0) {
