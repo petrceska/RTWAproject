@@ -23,8 +23,6 @@ class Ship {
         for (let i = 0; i < this.position.length; i++) {
             this.position[i] = arrayOfPoints[i];
         }
-        this.id = 1;
-        return this
     }
 
     shipSize(type) {
@@ -74,4 +72,4 @@ class Ship {
 
 }
 
-module.exports = Ship
+module.exports = Ship;
