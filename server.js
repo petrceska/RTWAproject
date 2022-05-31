@@ -56,13 +56,34 @@ function server(io) {
                 return
             }
 
-            if (game.myTurn(socket.id)){
+            if (game.singleplayer){
+                if (game.shoot(coord[0], coord[1], socket.id)) {
+                    socket.emit('hit', `${coord[0]},${coord[1]}`);
+                }else {
+                    socket.emit('miss', `${coord[0]},${coord[1]}`);
+                }
 
-            }else{
+            }
+
+            if (game.multiplayer) {
+                if (game.myTurn(socket.id)) {
+                    let opponentSocket;
+                    if (game.player1Turn) {
+                        opponentSocket = game.player2.socket;
+                    } else {
+                        opponentSocket = game.player1.socket;
+                    }
+                    if (game.shoot(coord[0], coord[1], socket.id)) {
+                        socket.emit('hit', `${coord[0]},${coord[1]}`);
+                        opponentSocket.emit('opponent hit', `${coord[0]},${coord[1]}`)
+                    } else {
+                        socket.emit('miss', `${coord[0]},${coord[1]}`);
+                        opponentSocket.emit('opponent miss', `${coord[0]},${coord[1]}`);
+                    }
+                }
+            } else {
                 socket.emit('not your turn');
             }
-            // socket.emit('miss', `${coord[0]},${coord[1]}`);
-            // socket.emit('hit', `${coord[0]},${coord[1]}`);
             // socket.emit('game ended', `win`);
             // socket.emit('game ended', `loss`);
             // game.player2.socket.emit('game invite', `${game.player1.name}`);

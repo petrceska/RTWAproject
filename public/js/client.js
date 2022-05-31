@@ -145,7 +145,7 @@ $(function () {
         $('#field-opponent').toggleClass("turn");
     });
 
-    socket.on('opponent-miss', function (msg) {
+    socket.on('opponent miss', function (msg) {
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -158,7 +158,7 @@ $(function () {
         $('#field-opponent').toggleClass("turn");
     });
 
-    socket.on('opponent-hit', function (msg) {
+    socket.on('opponent hit', function (msg) {
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
