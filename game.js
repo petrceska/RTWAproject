@@ -23,7 +23,6 @@ class Game {
         this.singleplayer = !type;
         this.winner = null;
         this.start = null;
-        this.end = null;
     }
 
     myTurn(id) {
@@ -34,10 +33,8 @@ class Game {
         let field;
         if (socketId === this.player1.socket.id) {
             field = this.player2.field;
-            this.player1Turn = false;
         } else {
             field = this.player1.field;
-            this.player1Turn = true;
         }
 
         if (field.checkShipPosition(x, y)) {
@@ -50,11 +47,29 @@ class Game {
         }
     }
 
-    checkDestroyedShips() {
-        if (this.player1Turn) {
-            return this.player1.field.checkDestroyedShips()
+    checkSankShips(socket) {
+        if (this.player1.socket.id === socket.id) {
+            return this.player2.field.checkDestroyedShips()
         }
-        return this.player2.field.checkDestroyedShips()
+        return this.player1.field.checkDestroyedShips()
+    }
+
+    checkGameWon(socket) {
+        if (socket !== null && this.player1.socket.id === socket.id) {
+            if (this.player2.field.currentShipsNum === 0) {
+                this.winner = this.player1;
+                socket.emit('game ended', 'win');
+                this.player2.socket.emit('game ended', 'loss');
+            }
+        } else {
+            if (this.player1.field.currentShipsNum === 0) {
+                this.winner = this.player2;
+                if (socket !== null){
+                    socket.emit('game ended', 'win');
+                }
+                this.player1.socket.emit('game ended', 'loss');
+            }
+        }
     }
 
     get randomPosition() {
@@ -86,8 +101,6 @@ class Player {
         this.name = name;
         this.socket = socket;
         this.field = field;
-        this.misses = null;
-        this.hits = null;
     }
 }
 

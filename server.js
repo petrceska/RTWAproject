@@ -24,10 +24,33 @@ function server(io) {
             name = name.toLowerCase()
             if (name !== null || users[name] !== null) {
                 console.log('returning user: ' + name + ' (after a client refresh). Welcome back!');
+
+                let game = games[name];
+                console.log(game);
+                console.log(socket.id);
+                console.log(games);
+                if (game !== null && game !== undefined){
+                    let player;
+                    let opponent;
+                    if (game.player1.name === name){
+                        socket.emit('construct game', `field=${game.fieldSize}` + (game.player1Turn ? " yourTurn" : ""));
+                        player = game.player1;
+                        opponent = game.player2;
+                    }else{
+                        socket.emit('construct game', `field=${game.fieldSize}` + (game.player1Turn ? "" : " yourTurn"));
+                        player = game.player2;
+                        opponent = game.player1;
+                    }
+                    socket.emit('render ships', "player=" + player.field.coordOfAllShips);
+                    socket.emit('render misses', "player=" + player.field.coordsOfAllMisses + " opponent=" + opponent.field.coordsOfAllMisses);
+                    socket.emit('render hits', "player=" + player.field.coordsOfAllHits + " opponent=" + opponent.field.coordsOfAllHits);
+                }
+
             } else {
                 console.log('new user by the name of: ' + name);
             }
             users[name] = socket;
+
             //TODO: Solve case when players have the same name
             // Proposal: make a dictionary with name and id where ID will be generated automaticaly and everything will be matched to it
         });
@@ -50,7 +73,7 @@ function server(io) {
                 socket.emit('error', `You can not shoot at position: "${msg}"`);
             }
 
-            let game = games[socket.id]; //TODO existuje hra -> načist novou
+            let game = games[getKeyByValue(users, socket)]; //TODO you already shoot on this coord
             if (game == null) {
                 socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
                 return
@@ -59,26 +82,37 @@ function server(io) {
             if (game.singleplayer) { //TODO better AI
                 if (game.shoot(coord[0], coord[1], socket.id)) {
                     socket.emit('hit', `${coord[0]},${coord[1]}`);
-                    let destroyed = game.checkDestroyedShips();
+                    let destroyed = game.checkSankShips(socket);
                     if (destroyed !== null) {
                         let coords = [];
                         destroyed.position.forEach(function (i) {
                             coords.push(i);
                         });
-                        socket.emit('ship sank', JSON.stringify(coords));
-                        JSON.stringify(coords)
+                        socket.emit('render ships', "opponent=" + JSON.stringify(coords));
+
+                        game.checkGameWon(socket);
                     }
+
                 } else {
                     socket.emit('miss', `${coord[0]},${coord[1]}`);
                 }
+
+                game.player1Turn = !game.player1Turn; //END of player turn
+
                 let x = game.randomPosition
                 let y = game.randomPosition
                 console.log(x, y);
                 if (game.shoot(x, y, null)) { // AI is shooting
                     socket.emit('opponent hit', `${x},${y}`);
+
+                    let destroyed = game.checkSankShips(null);
+                    if (destroyed !== null) {
+                        game.checkGameWon(null);
+                    }
                 } else {
                     socket.emit('opponent miss', `${x},${y}`);
                 }
+                game.player1Turn = !game.player1Turn; //END of player turn
                 return;
             }
 
@@ -92,7 +126,19 @@ function server(io) {
                     }
                     if (game.shoot(coord[0], coord[1], socket.id)) {
                         socket.emit('hit', `${coord[0]},${coord[1]}`);
-                        opponentSocket.emit('opponent hit', `${coord[0]},${coord[1]}`)
+                        opponentSocket.emit('opponent hit', `${coord[0]},${coord[1]}`);
+
+                        let destroyed = game.checkSankShips(socket);
+                        if (destroyed !== null) {
+                            let coords = [];
+                            destroyed.position.forEach(function (i) {
+                                coords.push(i);
+                            });
+                            socket.emit('render ships', "opponent=" + JSON.stringify(coords));
+
+                            game.checkGameWon(socket);
+                        }
+
                     } else {
                         socket.emit('miss', `${coord[0]},${coord[1]}`);
                         opponentSocket.emit('opponent miss', `${coord[0]},${coord[1]}`);
@@ -113,7 +159,7 @@ function server(io) {
 
         socket.on("accept", (name) => {
             if (users[name] !== null) {
-                let game = games[socket.id];
+                let game = games[getKeyByValue(users, socket)];
                 if (game == null) {
                     socket.emit('error', `There is no game associated with user ${name}.`);
                     return
@@ -168,11 +214,14 @@ function server(io) {
             }
 
             if (opponent == null) {
-                let game = Game.createSingleplayer(getKeyByValue(users, socket), socket, fieldSize);
+                let username = getKeyByValue(users, socket);
+
+                let game = Game.createSingleplayer(username, socket, fieldSize);
                 game.start = new Date();
                 game.player1.field.randomlyFillShips()
                 game.player2.field.randomlyFillShips()
-                games[socket.id] = game
+                console.log(game.player2.field.coordOfAllShips)
+                games[username] = game
                 socket.emit('construct game', `field=${game.fieldSize} yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
                 socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
 
@@ -184,8 +233,8 @@ function server(io) {
                 }
 
                 let game = Game.createMultiplayer(getKeyByValue(users, socket), opponent, socket, opponentSocket, fieldSize);
-                games[socket.id] = game
-                games[game.player2.socket.id] = game
+                games[username] = game
+                games[game.player2.name] = game
                 socket.emit('waiting for opponent', `opponent=${game.player2.name}`);
                 game.player2.socket.emit('game invite', `opponent=${game.player1.name}`);
 
@@ -200,18 +249,18 @@ function server(io) {
 
 function removeInvite(name) {
     if (users[name] !== null) {
-        let game = games[socket.id];
+        let game = games[getKeyByValue(users, socket)];
         if (game == null) {
             socket.emit('error', `There is no game associated with user ${name}.`);
             return
         }
 
         game.player1.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player2.name}")`);
-        delete games[game.player1.socket.id]
+        delete games[game.player1.name]
 
         if (game.multiplayer) {
             game.player2.socket.emit('invite deleted', `Game invite was deleted. (opponent: "${game.player1.name}")`);
-            delete games[game.player2.socket.id]
+            delete games[game.player2.name]
         }
 
     } else {
