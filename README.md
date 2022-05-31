@@ -12,4 +12,4 @@ Show statistics for another player: stats {nickname}
 
 ## contributors
 - Petr Ceska (peces22@student.sdu.dk)
-- David Valecky (@student.sdu.dk)
+- David Valecky (daval22@student.sdu.dk)
