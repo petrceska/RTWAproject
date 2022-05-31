@@ -23,7 +23,6 @@ class Game {
         this.singleplayer = !type;
         this.winner = null;
         this.start = null;
-        this.end = null;
     }
 
     myTurn(id) {
@@ -34,10 +33,8 @@ class Game {
         let field;
         if (socketId === this.player1.socket.id) {
             field = this.player2.field;
-            this.player1Turn = false;
         } else {
             field = this.player1.field;
-            this.player1Turn = true;
         }
 
         if (field.checkShipPosition(x, y)) {
@@ -52,9 +49,28 @@ class Game {
 
     checkDestroyedShips() {
         if (this.player1Turn) {
-            return this.player1.field.checkDestroyedShips()
+            return this.player2.field.checkDestroyedShips()
         }
-        return this.player2.field.checkDestroyedShips()
+        return this.player1.field.checkDestroyedShips()
+    }
+
+    checkGameWon() {
+        console.log(this.player2.field.currentShipsNum);
+        console.log(this.player1.field.currentShipsNum);
+
+        if (this.player1Turn) {
+            console.log("p1T");
+            if (this.player2.field.currentShipsNum === 0) {
+                this.winner = this.player1;
+                return true;
+            }
+        } else {
+            console.log("p2T");
+            if (this.player1.field.currentShipsNum === 0) {
+                this.winner = this.player2;
+                return true;
+            }
+        }
     }
 
     get randomPosition() {
@@ -86,8 +102,6 @@ class Player {
         this.name = name;
         this.socket = socket;
         this.field = field;
-        this.misses = null;
-        this.hits = null;
     }
 }
 

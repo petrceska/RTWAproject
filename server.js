@@ -65,20 +65,35 @@ function server(io) {
                         destroyed.position.forEach(function (i) {
                             coords.push(i);
                         });
-                        socket.emit('ship sank', JSON.stringify(coords));
-                        JSON.stringify(coords)
+                        socket.emit('render ships', "opponent=" + JSON.stringify(coords));
+
+                        if (game.checkGameWon()) {
+                            socket.emit('game ended', 'win');
+                        }
                     }
+
                 } else {
                     socket.emit('miss', `${coord[0]},${coord[1]}`);
                 }
+
+                game.player1Turn = !game.player1Turn; //END of player turn
+
                 let x = game.randomPosition
                 let y = game.randomPosition
                 console.log(x, y);
                 if (game.shoot(x, y, null)) { // AI is shooting
                     socket.emit('opponent hit', `${x},${y}`);
+
+                    let destroyed = game.checkDestroyedShips();
+                    if (destroyed !== null) {
+                        if (game.checkGameWon()) {
+                            socket.emit('game ended', 'loss');
+                        }
+                    }
                 } else {
                     socket.emit('opponent miss', `${x},${y}`);
                 }
+                game.player1Turn = !game.player1Turn; //END of player turn
                 return;
             }
 
@@ -172,6 +187,7 @@ function server(io) {
                 game.start = new Date();
                 game.player1.field.randomlyFillShips()
                 game.player2.field.randomlyFillShips()
+                console.log(game.player2.field.coordOfAllShips)
                 games[socket.id] = game
                 socket.emit('construct game', `field=${game.fieldSize} yourTurn`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
                 socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}

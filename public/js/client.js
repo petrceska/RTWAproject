@@ -122,14 +122,14 @@ $(function () {
                     let opJson = JSON.parse(arg[1]);
 
                     opJson.forEach((coord) => {
-                        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
+                        $(`#field-opponent .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).addClass('ship');
                     })
                     break;
                 case "player":
                     let pJson = JSON.parse(arg[1]);
 
                     pJson.forEach((coord) => {
-                        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
+                        $(`#field-player .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).addClass('ship');
                     });
                     break;
                 default:
@@ -151,14 +151,14 @@ $(function () {
                     let opJson = JSON.parse(arg[1]);
 
                     opJson.forEach((coord) => {
-                        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text("O");
+                        $(`#field-opponent .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).text("O");
                     })
                     break;
                 case "player":
                     let pJson = JSON.parse(arg[1]);
 
                     pJson.forEach((coord) => {
-                        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text("O");
+                        $(`#field-player .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).text("O");
                     });
                     break;
                 default:
@@ -180,14 +180,14 @@ $(function () {
                     let opJson = JSON.parse(arg[1]);
 
                     opJson.forEach((coord) => {
-                        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text("X");
+                        $(`#field-opponent .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).text("X");
                     })
                     break;
                 case "player":
                     let pJson = JSON.parse(arg[1]);
 
                     pJson.forEach((coord) => {
-                        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text("X");
+                        $(`#field-player .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).text("X");
                     });
                     break;
                 default:
@@ -195,15 +195,6 @@ $(function () {
                     return;
             }
         }
-    });
-
-    socket.on('ship sank', function (msg) {
-        console.log("socket.on('render ships'");
-        let json = JSON.parse(msg);
-
-        json.forEach((coord) => {
-            $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).addClass('ship');
-        })
     });
 
     socket.on('stats', function (msg) {
@@ -226,7 +217,7 @@ $(function () {
             $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
             return
         }
-        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text('O');
+        $(`#field-opponent .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).text('O');
 
         $('#field-player').toggleClass("turn");
         $('#field-opponent').toggleClass("turn");
@@ -241,7 +232,7 @@ $(function () {
             return
         }
 
-        $(`#field-opponent .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text('X');
+        $(`#field-opponent .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).text('X');
         $('#field-player').toggleClass("turn");
         $('#field-opponent').toggleClass("turn");
     });
@@ -255,7 +246,7 @@ $(function () {
             return
         }
 
-        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text('X');
+        $(`#field-player .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).text('X');
 
         $('#field-player').toggleClass("turn");
         $('#field-opponent').toggleClass("turn");
@@ -269,7 +260,7 @@ $(function () {
             $('#messages').append($('<li>').text(`there is something wrong with server response: "${msg}"`));
             return
         }
-        $(`#field-player .row:nth-child(${parseInt(coord[0])+2}) .col:nth-child(${parseInt(coord[1])+2})`).text('O');
+        $(`#field-player .row:nth-child(${parseInt(coord[0]) + 2}) .col:nth-child(${parseInt(coord[1]) + 2})`).text('O');
 
         $('#field-player').toggleClass("turn");
         $('#field-opponent').toggleClass("turn");
@@ -366,13 +357,20 @@ $(function () {
 
         switch (param) {
             case "win":
+                $('#messages').append($('<li>').html(`<h3>YOU WON :) - CG</h3>`));
                 break;
             case "loss":
+                $('#messages').append($('<li>').html(`<h3>YOU LOST :( - GG</h3>`));
                 break;
             default:
                 $('#messages').append($('<li>').text(`There is something wrong with argument while ending game: "${param}"`));
                 return;
         }
+        $('#field-player').removeClass("turn");
+        $('#field-opponent').removeClass("turn");
+
+        socket.emit('stats', userName);
+
         $('#field-player').html("");
         $('#field-opponent').html("");
     });

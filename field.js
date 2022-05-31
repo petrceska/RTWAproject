@@ -54,8 +54,8 @@ class Field {
 
     isShipDestroyed(ship) {
         let count = 0;
-        for (let i = 0; i < this.ship.position.length; i++) {
-            let coordinates = this.ship.position;
+        for (let i = 0; i < ship.position.length; i++) {
+            let coordinates = ship.position;
             let x = coordinates[i][0];
             let y = coordinates[i][1];
             if (this.field[x][y] === 2) {
@@ -67,7 +67,6 @@ class Field {
                 }
             }
         }
-
     }
 
     getAvailable1xXSpaces(arr = this.field) {
@@ -210,7 +209,7 @@ class Field {
         let moskva_na_dne = new Ship("3x2");
         let kriznik = new Ship("2x3");
         if (this.fieldSize <= 8) {
-            this.setFieldShips = [ship, lambada, lodka_v_mori, sombrero];
+            this.setFieldShips = [ship];
         } else if (this.fieldSize <= 10) {
             this.setFieldShips = [ship, sheep, lambada, lodka_v_mori, sombrero, clun, aurora, moskva, laparadise];
         } else if (this.fieldSize <= 12) {
@@ -279,8 +278,7 @@ class Field {
                     let y = this.ships[i].position[k][1];
                     this.setValueInField(x, y, 1);
                 }
-            }
-            else if (this.ships[i].len === 2 && this.ships[i].width === 2) {
+            } else if (this.ships[i].len === 2 && this.ships[i].width === 2) {
                 let availablePlaces = [];
                 let fieldLenPlaces = this.getAvailable2x2Spaces();
                 for (let j = 0; j < fieldLenPlaces.length; j++) {
@@ -296,8 +294,7 @@ class Field {
                     let y = this.ships[i].position[k][1];
                     this.setValueInField(x, y, 1);
                 }
-            }
-            else if (this.ships[i].len === 3 && this.ships[i].width === 2) {
+            } else if (this.ships[i].len === 3 && this.ships[i].width === 2) {
                 let availablePlaces = [];
                 let fieldLenPlaces = this.getAvailable3x2Spaces();
                 for (let j = 0; j < fieldLenPlaces.length; j++) {
@@ -313,8 +310,7 @@ class Field {
                     let y = this.ships[i].position[k][1];
                     this.setValueInField(x, y, 1);
                 }
-            }
-            else if (this.ships[i].len === 2 && this.ships[i].width === 3) {
+            } else if (this.ships[i].len === 2 && this.ships[i].width === 3) {
                 let availablePlaces = [];
                 let fieldLenPlaces = this.getAvailable2x3Spaces();
                 for (let j = 0; j < fieldLenPlaces.length; j++) {
@@ -346,8 +342,7 @@ class Field {
                 for (let j = y; j < y + ship.len; j++) {
                     if (!this.checkShipPosition(i, j)) {
                         this.saveIndexesToArray(position, i, j);
-                    }
-                    else {
+                    } else {
                         console.log("It is not possible to put ship to position: [%d,%d].", i, j);
                         return -1;
                     }
@@ -366,8 +361,7 @@ class Field {
                 console.log(ship.position[0]);
                 this.addShip(ship);
             }
-        }
-        else {
+        } else {
             console.log("It is not possible to put ship to position: [%d,%d].", x, y);
             return -1;
         }
