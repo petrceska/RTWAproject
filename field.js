@@ -218,7 +218,7 @@ class Field {
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
-                let slice = avalPlace.slice(0, this.ships[i].len);
+                let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
 
                 for (let k = 0; k < this.ships[i].position.length; k++) {
@@ -226,8 +226,7 @@ class Field {
                     let y = this.ships[i].position[k][1];
                     this.setValueInField(x, y, 1);
                 }
-            }
-            if (this.ships[i].len === 1) {
+            } else if (this.ships[i].len === 1) {
                 let availablePlaces = [];
                 let fieldLenPlaces = this.getAvailable1xXSpaces()[1];
                 for (let j = 0; j < fieldLenPlaces.length; j++) {
@@ -236,7 +235,7 @@ class Field {
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
-                let slice = avalPlace.slice(0, this.ships[i].len);
+                let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
                     let x = this.ships[i].position[k][0];
@@ -244,7 +243,7 @@ class Field {
                     this.setValueInField(x, y, 1);
                 }
             }
-            if (this.ships[i].len === 2 && this.ships[i].width === 2) {
+            else if (this.ships[i].len === 2 && this.ships[i].width === 2) {
                 let availablePlaces = [];
                 let fieldLenPlaces = this.getAvailable2x2Spaces();
                 for (let j = 0; j < fieldLenPlaces.length; j++) {
@@ -253,7 +252,7 @@ class Field {
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
-                let slice = avalPlace.slice(0, this.ships[i].len);
+                let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
                     let x = this.ships[i].position[k][0];
@@ -261,7 +260,7 @@ class Field {
                     this.setValueInField(x, y, 1);
                 }
             }
-            if (this.ships[i].len === 3 && this.ships[i].width === 2) {
+            else if (this.ships[i].len === 3 && this.ships[i].width === 2) {
                 let availablePlaces = [];
                 let fieldLenPlaces = this.getAvailable3x2Spaces();
                 for (let j = 0; j < fieldLenPlaces.length; j++) {
@@ -270,7 +269,7 @@ class Field {
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
-                let slice = avalPlace.slice(0, this.ships[i].len);
+                let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
                     let x = this.ships[i].position[k][0];
@@ -278,7 +277,7 @@ class Field {
                     this.setValueInField(x, y, 1);
                 }
             }
-            if (this.ships[i].len === 2 && this.ships[i].width === 3) {
+            else if (this.ships[i].len === 2 && this.ships[i].width === 3) {
                 let availablePlaces = [];
                 let fieldLenPlaces = this.getAvailable2x3Spaces();
                 for (let j = 0; j < fieldLenPlaces.length; j++) {
@@ -287,7 +286,7 @@ class Field {
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
-                let slice = avalPlace.slice(0, this.ships[i].len);
+                let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
                     let x = this.ships[i].position[k][0];
@@ -312,7 +311,6 @@ class Field {
                         this.saveIndexToArray(position, i, j);
                     }
                     else {
-                        console.log("děvečka");
                         console.log("It is not possible to put ship to position: [%d,%d].", i, j);
                         return -1;
                     }
@@ -327,8 +325,6 @@ class Field {
                 for (let i = 0; i < position.length; i++) {
                     this.setValueInField(position[i][0], position[i][1], 1);
                 }
-                console.log("ship.position[0]");
-                console.log(ship.position[0]);
                 this.addShip(ship);
             }
         }
