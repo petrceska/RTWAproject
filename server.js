@@ -56,18 +56,18 @@ function server(io) {
                 return
             }
 
-            if (game.singleplayer){ //TODO better AI
+            if (game.singleplayer) { //TODO better AI
                 if (game.shoot(coord[0], coord[1], socket.id)) {
                     socket.emit('hit', `${coord[0]},${coord[1]}`);
-                }else {
+                } else {
                     socket.emit('miss', `${coord[0]},${coord[1]}`);
                 }
                 let x = game.randomPosition
                 let y = game.randomPosition
-                console.log(x,y);
+                console.log(x, y);
                 if (game.shoot(x, y, null)) { // AI is shooting
                     socket.emit('opponent hit', `${x},${y}`);
-                }else {
+                } else {
                     socket.emit('opponent miss', `${x},${y}`);
                 }
                 return;
@@ -88,7 +88,7 @@ function server(io) {
                         socket.emit('miss', `${coord[0]},${coord[1]}`);
                         opponentSocket.emit('opponent miss', `${coord[0]},${coord[1]}`);
                     }
-                }else {
+                } else {
                     socket.emit('not your turn');
                 }
             }
@@ -228,13 +228,5 @@ function server(io) {
         });
     });
 }
-
-
-// PlayerStats.load(game.player1.name).then(stats => {
-// TODO uložení
-//     stats.gamesPlayed += 1;
-//     console.log(stats)
-//     stats.saveStats()
-// });
 
 module.exports = server
