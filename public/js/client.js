@@ -325,6 +325,7 @@ $(function () {
                     break;
                 default:
                     $('#messages').append($('<li>').text(`There is something wrong with argument while creating game: "${argArray[i]}"`));
+                    $('#messages').append($('<li>').text(`There is something wrong with argument while creating game: "${argArray[i]}"`));
                     return;
             }
         }

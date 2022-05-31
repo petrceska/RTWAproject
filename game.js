@@ -47,28 +47,27 @@ class Game {
         }
     }
 
-    checkDestroyedShips() {
-        if (this.player1Turn) {
+    checkSankShips(socket) {
+        if (this.player1.socket.id === socket.id) {
             return this.player2.field.checkDestroyedShips()
         }
         return this.player1.field.checkDestroyedShips()
     }
 
-    checkGameWon() {
-        console.log(this.player2.field.currentShipsNum);
-        console.log(this.player1.field.currentShipsNum);
-
-        if (this.player1Turn) {
-            console.log("p1T");
+    checkGameWon(socket) {
+        if (socket !== null && this.player1.socket.id === socket.id) {
             if (this.player2.field.currentShipsNum === 0) {
                 this.winner = this.player1;
-                return true;
+                socket.emit('game ended', 'win');
+                this.player2.socket.emit('game ended', 'loss');
             }
         } else {
-            console.log("p2T");
             if (this.player1.field.currentShipsNum === 0) {
                 this.winner = this.player2;
-                return true;
+                if (socket !== null){
+                    socket.emit('game ended', 'win');
+                }
+                this.player1.socket.emit('game ended', 'loss');
             }
         }
     }

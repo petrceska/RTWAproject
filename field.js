@@ -38,7 +38,7 @@ class Field {
     }
 
     shipMiss(x, y) {
-        this.field[x][y] = 2;
+        this.field[x][y] = 3;
     }
 
     checkDestroyedShips() {
