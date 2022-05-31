@@ -177,16 +177,33 @@ class Field {
 
     randomlyFillShips() {
         let ship = new Ship("2x1");
-        let kriznik = new Ship("2x1");
-        let lambada = new Ship("2x1");
+        let sheep = new Ship("2x1");
         let lodka = new Ship("2x1");
+        let lambada = new Ship("1x2");
+        let lodka_v_mori = new Ship("1x2");
         let sombrero = new Ship("3x1");
         let aurora = new Ship("3x1");
         let parnik = new Ship("3x1");
+        let laparadise = new Ship("1x3");
+        let clun = new Ship("1x3");
         let moskva = new Ship("4x1");
         let torpednik = new Ship("4x1");
         let bitevnik = new Ship("2x2");
-        ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+        let moskva_na_dne = new Ship("3x2");
+        let kriznik = new Ship("2x3");
+        if (this.fieldSize <= 8) {
+            ships.push(ship, lambada, lodka_v_mori, sombrero, clun, aurora, moskva);
+        } else if (this.fieldSize <= 10) {
+            ships.push(ship, sheep, lambada, lodka_v_mori, sombrero, clun, aurora, moskva, laparadise);
+        } else if (this.fieldSize <= 12) {
+            ships.push(ship, sheep, kriznik, lodka_v_mori, sombrero, clun, parnik, lambada, aurora, moskva, torpednik);
+        } else if (this.fieldSize <= 15) {
+            ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+        } else if (this.fieldSize <= 17) {
+            ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+        } else {
+            ships.push(ship, kriznik, lambada, sombrero, aurora, moskva);
+        }
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].width === 1) {
                 let availablePlaces = [];
