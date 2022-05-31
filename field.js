@@ -231,9 +231,9 @@ class Field {
                         availablePlaces.push(fieldWidthPlaces[j]);
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
-                console.log("!!!--------placeIndex---------!!!");
+                console.log("!!!---place len index---!!!");
                 console.log(placeIndex);
-                console.log("available Length Places");
+                console.log("available Len Places");
                 console.log(availablePlaces);
                 console.log("availablePlaces[placeIndex]");
                 console.log(availablePlaces[placeIndex]);
@@ -261,15 +261,19 @@ class Field {
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].position.length);
-                this.ships[i].changePosition(slice);
-                console.log("----------this.ships[i]------------");
-                console.log(this.ships[i]);
+                console.log("!!!---place width index---!!!");
+                console.log(placeIndex);
+                console.log("available Len Places");
+                console.log(availablePlaces);
                 console.log("slice");
                 console.log(slice);
                 console.log("this.ships[i].position.length");
                 console.log(this.ships[i].position.length);
+                this.ships[i].changePosition(slice);
+                console.log("----------this.ships[i]------------");
+                console.log(this.ships[i]);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
-                    console.log("this.ships[i].position[k][1]");
+                    console.log("this.ships[i].position[k][0]");
                     console.log(this.ships[i].position[k][0]);
                     let x = this.ships[i].position[k][0];
                     let y = this.ships[i].position[k][1];
