@@ -45,7 +45,7 @@ class Field {
         for (let i = 0; i < this.ships.length; i++) {
             let ship = this.ships[i];
 
-            if(this.isShipDestroyed(ship)){
+            if (this.isShipDestroyed(ship)) {
                 return ship;
             }
         }
@@ -80,7 +80,7 @@ class Field {
             for (let j = 0; j < this.fieldSize; j++) {
                 // if 0 then available index of field where you can put a ship
                 if (arr[i][j] === 0) {
-                    this.saveIndexToArray(indexRowSequence, i, j);
+                    this.saveIndexesToArray(indexRowSequence, i, j);
                 } else {
                     // end of sequences of available space where to put a ship
                     if (indexRowSequence.length !== 0) {
@@ -90,7 +90,7 @@ class Field {
                 }
                 // also save sequence of indexes in oposite direction
                 if (arr[j][i] === 0) {
-                    this.saveIndexToArray(indexColSequence, j, i);
+                    this.saveIndexesToArray(indexColSequence, j, i);
                 } else {
                     // end of a sequence
                     if (indexColSequence.length !== 0) {
@@ -129,10 +129,10 @@ class Field {
             for (var j = 0; j < this.fieldSize - 1; j++) {
                 // if 0 then available index of field where you can put a ship
                 if (arr[i][j] === 0 && arr[i][j + 1] === 0 && arr[i + 1][j] === 0 && arr[i + 1][j + 1] === 0) {
-                    this.saveIndexToArray(shape2x2, i, j);
-                    this.saveIndexToArray(shape2x2, i + 1, j);
-                    this.saveIndexToArray(shape2x2, i, j + 1);
-                    this.saveIndexToArray(shape2x2, i + 1, j + 1);
+                    this.saveIndexesToArray(shape2x2, i, j);
+                    this.saveIndexesToArray(shape2x2, i + 1, j);
+                    this.saveIndexesToArray(shape2x2, i, j + 1);
+                    this.saveIndexesToArray(shape2x2, i + 1, j + 1);
                     shapes.push(shape2x2);
                     shape2x2 = [];
                 }
@@ -149,10 +149,10 @@ class Field {
                 // if 0 then available index of field where you can put a ship
                 if (arr[i][j] === 0 && arr[i][j + 1] === 0 && arr[i + 1][j] === 0 && arr[i + 1][j + 1] === 0
                     && arr[i + 1][j + 2] === 0 && arr[i][j + 2] === 0) {
-                    this.saveIndexToArray(shape3x2, i, j);
-                    this.saveIndexToArray(shape3x2, i + 1, j);
-                    this.saveIndexToArray(shape3x2, i, j + 1);
-                    this.saveIndexToArray(shape3x2, i + 1, j + 1);
+                    this.saveIndexesToArray(shape3x2, i, j);
+                    this.saveIndexesToArray(shape3x2, i + 1, j);
+                    this.saveIndexesToArray(shape3x2, i, j + 1);
+                    this.saveIndexesToArray(shape3x2, i + 1, j + 1);
                     shapes.push(shape3x2);
                     shape3x2 = [];
                 }
@@ -169,10 +169,10 @@ class Field {
                 // if 0 then available index of field where you can put a ship
                 if (arr[j][i] === 0 && arr[j][i + 1] === 0 && arr[j + 1][i] === 0 && arr[j + 1][i + 1] === 0
                     && arr[j + 1][i + 2] === 0 && arr[j][i + 2] === 0) {
-                    this.saveIndexToArray(shape2x3, i, j);
-                    this.saveIndexToArray(shape2x3, i + 1, j);
-                    this.saveIndexToArray(shape2x3, i, j + 1);
-                    this.saveIndexToArray(shape2x3, i + 1, j + 1);
+                    this.saveIndexesToArray(shape2x3, i, j);
+                    this.saveIndexesToArray(shape2x3, i + 1, j);
+                    this.saveIndexesToArray(shape2x3, i, j + 1);
+                    this.saveIndexesToArray(shape2x3, i + 1, j + 1);
                     shapes.push(shape2x3);
                     shape2x3 = [];
                 }
@@ -181,7 +181,7 @@ class Field {
         return shapes;
     }
 
-    saveIndexToArray(arr, i, j) {
+    saveIndexesToArray(arr, i, j) {
         // indexes of founded 0 in given array
         let indexes = new Uint8Array(2);
         indexes[0] = i;
@@ -345,7 +345,7 @@ class Field {
             for (let i = x; i < x + ship.width; i++) {
                 for (let j = y; j < y + ship.len; j++) {
                     if (!this.checkShipPosition(i, j)) {
-                        this.saveIndexToArray(position, i, j);
+                        this.saveIndexesToArray(position, i, j);
                     }
                     else {
                         console.log("It is not possible to put ship to position: [%d,%d].", i, j);
@@ -373,10 +373,10 @@ class Field {
         }
     }
 
-    get coordOfAllShips(){
+    get coordOfAllShips() {
         let coords = [];
-        this.ships.forEach(function (x){
-            x.position.forEach(function (i){
+        this.ships.forEach(function (x) {
+            x.position.forEach(function (i) {
                 coords.push(i);
             });
         });
@@ -384,7 +384,29 @@ class Field {
         return JSON.stringify(coords)
     }
 
+    get coordsOfAllHits() {
+        let coords = [];
+        for (let i = 0; i < this.fieldSize; i++) {
+            for (let j = 0; j < this.fieldSize; j++) {
+                if (this.field[i][j] === 2) {
+                    this.saveIndexesToArray(coords, i, j);
+                }
+            }
+        }
+        return JSON.stringify(coords);
+    }
 
+    get coordsOfAllMisses() {
+        let coords = [];
+        for (let i = 0; i < this.fieldSize; i++) {
+            for (let j = 0; j < this.fieldSize; j++) {
+                if (this.field[i][j] === 3) {
+                    this.saveIndexesToArray(coords, i, j);
+                }
+            }
+        }
+        return JSON.stringify(coords);
+    }
 }
 
 module.exports = Field
