@@ -60,19 +60,22 @@ class Game {
                 this.winner = this.player1;
                 socket.emit('game ended', 'win');
 
-                if (this.player2.socket !== null){
+                if (this.player2.socket !== null) {
                     this.player2.socket.emit('game ended', 'loss');
                 }
+                return true;
             }
         } else {
             if (this.player1.field.currentShipsNum === 0) {
                 this.winner = this.player2;
-                if (socket !== null){
+                if (socket !== null) {
                     socket.emit('game ended', 'win');
                 }
                 this.player1.socket.emit('game ended', 'loss');
+                return true;
             }
         }
+        return false;
     }
 
     get randomPosition() {

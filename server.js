@@ -20,21 +20,21 @@ function server(io) {
 
                 let game = games[name];
 
-                if (game !== null && game !== undefined){
+                if (game !== null && game !== undefined) {
 
                     let player;
                     let opponent;
-                    if (game.player1.name === name){
+                    if (game.player1.name === name) {
                         socket.emit('construct game', `field=${game.fieldSize}` + (game.player1Turn ? " yourTurn" : ""));
                         player = game.player1;
                         opponent = game.player2;
-                    }else{
+                    } else {
                         socket.emit('construct game', `field=${game.fieldSize}` + (game.player1Turn ? "" : " yourTurn"));
                         player = game.player2;
                         opponent = game.player1;
                     }
 
-                    if(player.name === name){ //bind new socket
+                    if (player.name === name) { //bind new socket
                         player.socket = socket;
                     }
 
@@ -87,7 +87,11 @@ function server(io) {
                         });
                         socket.emit('render ships', "opponent=" + JSON.stringify(coords));
 
-                        game.checkGameWon(socket);
+                        end = game.checkGameWon(socket);
+                        if (end) {
+                            game.savePlayerStats(game.player1);
+                            game.savePlayerStats(game.player2);
+                        }
                     }
 
                 } else {
@@ -104,7 +108,11 @@ function server(io) {
 
                     let destroyed = game.checkSankShips(null);
                     if (destroyed !== null) {
-                        game.checkGameWon(null);
+                        end = game.checkGameWon(null);
+                        if (end) {
+                            game.savePlayerStats(game.player1);
+                            game.savePlayerStats(game.player2);
+                        }
                     }
                 } else {
                     socket.emit('opponent miss', `${x},${y}`);
@@ -133,7 +141,11 @@ function server(io) {
                             });
                             socket.emit('render ships', "opponent=" + JSON.stringify(coords));
 
-                            game.checkGameWon(socket);
+                            end = game.checkGameWon(socket);
+                            if (end) {
+                                game.savePlayerStats(game.player1);
+                                game.savePlayerStats(game.player2);
+                            }
                         }
 
                     } else {
@@ -152,7 +164,7 @@ function server(io) {
 
         });
 
-        socket.on("decline", function(name) {
+        socket.on("decline", function (name) {
             if (users[name] !== null) {
                 let game = games[getKeyByValue(users, socket)];
                 if (game == null) {
@@ -260,7 +272,7 @@ function server(io) {
                 socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
 
             } else {
-                if (opponent === username){
+                if (opponent === username) {
                     socket.emit('error', `Playing with yourself? too easy :).`);
                     return;
                 }
@@ -284,10 +296,10 @@ function server(io) {
             let username = getKeyByValue(users, socket);
             let game = games[username];
 
-            if (game.player1.name === username){
+            if (game.player1.name === username) {
                 game.player1.field.randomlyFillShips()
                 socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
-            }else if(game.player2.name === username){
+            } else if (game.player2.name === username) {
                 game.player2.field.randomlyFillShips()
                 socket.emit('render ships', "player=" + game.player2.field.coordOfAllShips);
 
