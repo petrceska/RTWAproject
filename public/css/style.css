@@ -37,7 +37,8 @@ form button {
     padding: 0;
     width: 100%;
     position: absolute;
-    top: 500px;
+    top: 550px;
+    overflow: scroll;
 }
 
 #messages li {
@@ -83,14 +84,26 @@ form button {
 #left-div{
     float: left;
     width: 50%;
-    height: 500px;
+    height: 550px;
     vertical-align: center;
     text-align: center;
+    border-right: 1px black solid;
 }
 #right-div{
     float: right;
     width: 50%;
-    height: 500px;
+    height: 550px;
     vertical-align: center;
     text-align: center;
+    border-left: 1px black solid;
+}
+
+#field-player{
+    margin-right: 20px;
+    float: right;
+}
+
+#field-opponent{
+    margin-left: 20px;
+    float: left;
 }

@@ -50,7 +50,10 @@ function server(io) {
             }
 
             let game = games[socket.id];
-
+            if (game == null) {
+                socket.emit('message', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
+                return
+            }
             // socket.emit('miss', `${coord[0]},${coord[1]}`);
             // socket.emit('hit', `${coord[0]},${coord[1]}`);
             // socket.emit('game ended', `win`);
@@ -138,7 +141,7 @@ function server(io) {
                     switch (arg[0]) {
                         case "field":
                             console.log(arg[1]);
-                            fieldSize = Math.max(10, Math.min(parseInt(arg[1]), 25)); // field size between 10, 25
+                            fieldSize = Math.max(10, Math.min(parseInt(arg[1]), 26)); // field size between 10, 25
                             break;
                         case "ships":
                             console.log(arg[1]);
@@ -160,7 +163,7 @@ function server(io) {
                 let game = Game.createSingleplayer(getKeyByValue(users, socket), socket, fieldSize);
                 game.start = new Date();
                 games[socket.id] = game
-                socket.emit('construct game', `field=10 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
+                socket.emit('construct game', `field=25 ships=6`); //${game.player1.field.fieldSize} - ${game.player1.field.shipsNum}
 
             } else {
                 let opponentSocket = users[opponent]
@@ -184,9 +187,9 @@ function server(io) {
     });
 }
 
-// TODO uložení
+
 // PlayerStats.load(game.player1.name).then(stats => {
-//
+// TODO uložení
 //     stats.gamesPlayed += 1;
 //     console.log(stats)
 //     stats.saveStats()
