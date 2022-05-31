@@ -42,7 +42,7 @@ class PlayerStats {
 
             // Insert a single player, wait for promise so we can read it back
             // await col.updateOne({name: this.name}, this, {upsert: true });
-            await col.updateOne({name: this.name}, {$set:this}, {upsert: true });
+            await col.updateOne({name: this.name}, {$set: this}, {upsert: true});
         } catch (e) {
             console.error(e)
         } finally {
@@ -68,7 +68,7 @@ class PlayerStats {
         }
     }
 
-    static async scoreboard(){
+    static async scoreboard() {
         try {
             await client.connect();
             const db = client.db(dbName);
@@ -77,7 +77,7 @@ class PlayerStats {
             const col = db.collection("playerStats");
 
             // Find one game document
-            return await col.find().sort({ score: -1 }).limit(5).toArray();
+            return await col.find().sort({score: -1}).limit(5).toArray();
         } catch (e) {
             console.error(e)
         } finally {
