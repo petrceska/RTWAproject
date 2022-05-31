@@ -23,7 +23,7 @@ class Field {
         return this.field;
     }
 
-    getRandomInt(min, max) {
+    static getRandomInt(min, max) {
         return Math.round(Math.random() * (max - min) + min);
     }
 
@@ -182,7 +182,7 @@ class Field {
                     if (fieldWidthPlaces[j].length >= this.ships[i].width)
                         availablePlaces.push(fieldWidthPlaces[j]);
                 }
-                let placeIndex = this.getRandomInt(0, availablePlaces.length - 1);
+                let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].len);
                 this.ships[i].changePosition(slice);
@@ -200,7 +200,7 @@ class Field {
                     if (fieldLenPlaces[j].length >= this.ships[i].width)
                         availablePlaces.push(fieldLenPlaces[j]);
                 }
-                let placeIndex = this.getRandomInt(0, availablePlaces.length - 1);
+                let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].len);
                 this.ships[i].changePosition(slice);
@@ -217,7 +217,7 @@ class Field {
                     if (fieldLenPlaces[j].length >= this.ships[i].width)
                         availablePlaces.push(fieldLenPlaces[j]);
                 }
-                let placeIndex = this.getRandomInt(0, availablePlaces.length - 1);
+                let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].len);
                 this.ships[i].changePosition(slice);
@@ -234,7 +234,7 @@ class Field {
                     if (fieldLenPlaces[j].length >= this.ships[i].width)
                         availablePlaces.push(fieldLenPlaces[j]);
                 }
-                let placeIndex = this.getRandomInt(0, availablePlaces.length - 1);
+                let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].len);
                 this.ships[i].changePosition(slice);
@@ -251,7 +251,7 @@ class Field {
                     if (fieldLenPlaces[j].length >= this.ships[i].width)
                         availablePlaces.push(fieldLenPlaces[j]);
                 }
-                let placeIndex = this.getRandomInt(0, availablePlaces.length - 1);
+                let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].len);
                 this.ships[i].changePosition(slice);
