@@ -2,16 +2,13 @@ const Ship = require("./ship");
 
 class Field {
     constructor(fieldSize) {
-        this.fieldSize = fieldSize;
-        this.setSize = this.fieldSize;
-        this.ships = null;
-    }
 
-    set setSize(fieldSize) {
-        if (fieldSize !== null) {
-            this.fieldSize = fieldSize;
-            this.field = Array.from(Array(fieldSize), () => Array(fieldSize).fill(0));
+        if (fieldSize === null) {
+            fieldSize = 10;
         }
+        this.fieldSize = fieldSize;
+        this.field = Array.from(Array(fieldSize), () => new Array(fieldSize).fill(0));
+        this.ships = null;
     }
 
     set setFieldShips(ships) {
@@ -32,15 +29,19 @@ class Field {
         return Math.round(Math.random() * (max - min) + min);
     }
 
-    destroyFieldSpot(x, y) {
+    shipHit(x, y) {
+        this.field[x][y] = 2;
+    }
+
+    shipMiss(x, y) {
         this.field[x][y] = 2;
     }
 
     isShipDestroyed(ship) {
         let count = 0;
         ship.position.forEach(function (points, index) {
-            x = points[0];
-            y = points[1];
+            let x = points[0];
+            let y = points[1];
             if (this.field[x][y] === 2) {
                 count++;
                 if (count === ship.position.length) {
@@ -271,4 +272,5 @@ class Field {
     }
 
 }
+
 module.exports = Field

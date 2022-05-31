@@ -1,7 +1,7 @@
 const Field = require("./field");
 class Game {
     static createSingleplayer(player, socket, fieldSize) {
-        return new Game(player, null, socket, null, false, fieldSize);
+        return new Game(player, "AI", socket, null, false, fieldSize);
     }
 
     static createMultiplayer(player1, player2, socket1, socket2, fieldSize) {
@@ -21,6 +21,26 @@ class Game {
 
     myTurn(id){
         return (this.player1.socket.id === id && this.player1Turn) || (this.player2.socket.id === id && !this.player1Turn);
+    }
+
+    shoot(x, y, socketId){
+        let field;
+        if (socketId === this.player1.socket.id){
+            field = this.player1.field;
+            this.player1Turn = false;
+        }else{
+            field = this.player2.field;
+            this.player1Turn = true;
+        }
+
+        if (field.checkShipPosition(x, y)){
+            field.shipHit(x,y);
+            return true;
+        }else{
+            field.shipMiss(x,y);
+            return false;
+
+        }
     }
 
 }
