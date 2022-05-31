@@ -91,17 +91,14 @@ $(function () {
     // ------------------------------------------------------------------------ INCOMING
 
     socket.on('chat message', function (msg) {
-        console.log("socket.on('chat message'");
         $('#messages').append($('<li>').text(msg));
     });
 
     socket.on('error', function (msg) {
-        console.log("socket.on('error'");
         $('#messages').append($('<li>').text(msg).addClass("error-message"));
     });
 
     socket.on('scoreboard', function (msg) {
-        console.log("socket.on('scoreboard'");
         let json = JSON.parse(msg);
         let table = `<table class="scoreboard"><tr><th>Rank</th><th>Name</th><th>Games won</th><th>Games played</th><th>Score</th></tr>`;
 
@@ -114,7 +111,6 @@ $(function () {
     });
 
     socket.on('render ships', function (params) {
-        console.log("socket.on('render ships'");
         let argArray = params.split(" ");
 
         for (let i in argArray) {
@@ -143,7 +139,6 @@ $(function () {
     });
 
     socket.on('render hits', function (params) {
-        console.log("socket.on('render hits'");
         let argArray = params.split(" ");
 
         for (let i in argArray) {
@@ -172,7 +167,6 @@ $(function () {
     });
 
     socket.on('render misses', function (params) {
-        console.log("socket.on('render misses'");
         let argArray = params.split(" ");
 
         for (let i in argArray) {
@@ -201,7 +195,6 @@ $(function () {
     });
 
     socket.on('stats', function (msg) {
-        console.log("socket.on('stats'");
         let json = JSON.parse(msg);
 
         let table = `<table class="scoreboard"><tr><th>Name</th><th>Games won</th><th>Games played</th><th>Score</th></tr>`
@@ -213,7 +206,6 @@ $(function () {
     });
 
     socket.on('hit', function (msg) {
-        console.log("socket.on('hit'");
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -227,7 +219,6 @@ $(function () {
     });
 
     socket.on('miss', function (msg) {
-        console.log("socket.on('miss'");
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -241,7 +232,6 @@ $(function () {
     });
 
     socket.on('opponent miss', function (msg) {
-        console.log("socket.on('opponent miss'");
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -256,7 +246,6 @@ $(function () {
     });
 
     socket.on('opponent hit', function (msg) {
-        console.log("socket.on('opponent hit'");
         let coord = msg.split(",");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -270,7 +259,6 @@ $(function () {
     });
 
     socket.on('game invite', function (msg) {
-        console.log("socket.on('game invite'");
         let coord = msg.split("=");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -281,12 +269,10 @@ $(function () {
     });
 
     socket.on('invite deleted', function (msg) {
-        console.log("socket.on('invite deleted'");
         $('#messages').append($('<li>').text(msg));
     });
 
     socket.on('waiting for opponent', function (msg) {
-        console.log("socket.on('waiting for opponent'");
         let coord = msg.split("=");
 
         if (coord == null || coord[0] == null || coord[1] == null) {
@@ -297,12 +283,10 @@ $(function () {
     });
 
     socket.on('wrong parameters', function (msg) {
-        console.log("socket.on('wrong parameters'");
         $('#messages').append($('<li class="error">').text(msg));
     });
 
     socket.on('not your turn', function () {
-        console.log("socket.on('not your turn");
         $('#messages').append($('<li class="error">').text("It is not your turn. You have to wait for opponent to play."));
 
         $('#field-player').removeClass("turn");
@@ -310,9 +294,7 @@ $(function () {
     });
 
     socket.on('construct game', function (params) {
-        console.log("socket.on('construct game'");
         let fieldSize = 10;
-        console.log(params);
 
         let argArray = params.split(" ");
 
@@ -360,7 +342,6 @@ $(function () {
     });
 
     socket.on('game ended', function (param) {
-        console.log("socket.on('game ended'");
 
         switch (param) {
             case "win":
@@ -407,7 +388,6 @@ $(function () {
                 return null
             }
         }
-        console.log(`${row},${col}`);
         return `${row},${col}`
     }
 

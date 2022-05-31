@@ -11,12 +11,10 @@ function getKeyByValue(object, value) {
 
 function server(io) {
     io.on('connection', function (socket) {
-        console.log('a user connected');
 
         socket.on("it's me", (name) => {
             name = name.toLowerCase()
             if (name !== null || users[name] !== null) {
-                console.log('returning user: ' + name + ' (after a client refresh). Welcome back!');
 
                 let game = games[name];
 
@@ -44,7 +42,6 @@ function server(io) {
                 }
 
             } else {
-                console.log('new user by the name of: ' + name);
             }
             users[name] = socket;
 
@@ -53,8 +50,41 @@ function server(io) {
         });
 
         socket.on('chat message', function (msg) {
-            console.log('message: ' + msg);
             io.emit('chat message', msg);
+        });
+
+        socket.on('ship', function (msg) {
+            let argArray = msg.split(" ");
+            let type = argArray[0];
+
+            let coord = null;
+            try {
+                coord = argArray[1].split(",");
+
+                if (coord == null || coord[0] == null || coord[1] == null) {
+                    socket.emit('error', `You can not put it at this position: "${msg}"`);
+                }
+            } catch (e) {
+                socket.emit('error', `You can not put it at this position: "${msg}"`);
+            }
+
+            let game = games[getKeyByValue(users, socket)];
+            if (game == null) {
+                socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
+                return
+            }
+
+            if (socket !== null && this.player1.socket.id === socket.id) {
+                if (this.player1.field.putShipToField(type, coord[0], coord[1]) === -1){
+                    socket.emit('error', `you cannot put ship ${type} on possition ${coord[0]}, ${coord[1]}.`);
+                }
+                socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
+            }else{
+                if (this.player2.field.putShipToField(type, coord[0], coord[1]) === -1){
+                    socket.emit('error', `you cannot put ship ${type} on possition ${coord[0]}, ${coord[1]}.`);
+                }
+                socket.emit('render ships', "player=" + game.player2.field.coordOfAllShips);
+            }
         });
 
         socket.on('shoot', function (msg) {
@@ -70,7 +100,7 @@ function server(io) {
                 socket.emit('error', `You can not shoot at position: "${msg}"`);
             }
 
-            let game = games[getKeyByValue(users, socket)]; //TODO you already shoot on this coord
+            let game = games[getKeyByValue(users, socket)];
             if (game == null) {
                 socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
                 return
@@ -102,7 +132,6 @@ function server(io) {
 
                 let x = game.randomPosition
                 let y = game.randomPosition
-                console.log(x, y);
                 if (game.shoot(x, y, null)) { // AI is shooting
                     socket.emit('opponent hit', `${x},${y}`);
 
@@ -152,6 +181,8 @@ function server(io) {
                         socket.emit('miss', `${coord[0]},${coord[1]}`);
                         opponentSocket.emit('opponent miss', `${coord[0]},${coord[1]}`);
                     }
+                    game.player1Turn = !game.player1Turn; //END of player turn
+
                 } else {
                     socket.emit('not your turn');
                 }
@@ -245,15 +276,12 @@ function server(io) {
                 if (arg[0] !== '') {
                     switch (arg[0]) {
                         case "field":
-                            console.log(arg[1]);
                             fieldSize = Math.max(8, Math.min(parseInt(arg[1]), 26)); // field size between 10, 25
                             break;
                         case "opponent":
-                            console.log(arg[1]);
                             opponent = arg[1];
                             break;
                         default:
-                            console.log("emit");
                             socket.emit('error', `There is something wrong with argument "${argArray[i]}"`);
                             return;
                     }
@@ -307,7 +335,6 @@ function server(io) {
         });
 
         socket.on('disconnect', function () {
-            console.log('user disconnected');
         });
     });
 }
@@ -316,7 +343,7 @@ function server(io) {
 // PlayerStats.load(game.player1.name).then(stats => {
 // TODO uložení
 //     stats.gamesPlayed += 1;
-//     console.log(stats)
+//
 //     stats.saveStats()
 // });
 
