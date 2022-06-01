@@ -53,6 +53,35 @@ function server(io) {
             io.emit('chat message', msg);
         });
 
+        socket.on('surrender', function () {
+            let game = games[getKeyByValue(users, socket)];
+            if (game == null) {
+                socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
+                return
+            }
+
+            if (game.player1.socket.id === socket.id) {
+                game.winner = game.player2;
+            }else{
+                game.winner = game.player1;
+            } //TODO update stats
+
+            socket.emit('game ended', `loss by surrender`);
+            if (game.winner.socket !== null) {
+                game.winner.emit('game ended', `win by surrender`);
+            }
+        });
+
+        socket.on('fleet', function () {
+            let game = games[getKeyByValue(users, socket)];
+            if (game == null) {
+                socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
+                return
+            }
+
+            io.emit('fleet', JSON.stringify(game.player1.field.possibleShips));
+        });
+
         socket.on('ship', function (msg) {
             let argArray = msg.split(" ");
             let type = argArray[0];
@@ -74,14 +103,17 @@ function server(io) {
                 return
             }
 
-            if (socket !== null && this.player1.socket.id === socket.id) {
-                if (this.player1.field.putShipToField(type, coord[0], coord[1]) === -1){
-                    socket.emit('error', `you cannot put ship ${type} on possition ${coord[0]}, ${coord[1]}.`);
+            if (socket !== null && game.player1.socket.id === socket.id) {
+
+                if (game.player1.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1])) === -1){
+                    socket.emit('error', `you cannot put ship ${type} on position ${coord[0]}, ${coord[1]}.`);
+                    return;
                 }
                 socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
             }else{
-                if (this.player2.field.putShipToField(type, coord[0], coord[1]) === -1){
-                    socket.emit('error', `you cannot put ship ${type} on possition ${coord[0]}, ${coord[1]}.`);
+                if (game.player2.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1])) === -1){
+                    socket.emit('error', `you cannot put ship ${type} on position ${coord[0]}, ${coord[1]}.`);
+                    return;
                 }
                 socket.emit('render ships', "player=" + game.player2.field.coordOfAllShips);
             }

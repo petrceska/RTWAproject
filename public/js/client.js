@@ -18,6 +18,7 @@ $(function () {
             if (commandValue.startsWith("play")) {
 
                 commandValue = commandValue.replace('play', '').trim();
+                commandValue = commandValue.replace('play', '').trim();
                 socket.emit('play', commandValue);
 
             } else if (commandValue.startsWith("shoot")) {
@@ -40,14 +41,25 @@ $(function () {
                 commandValue = commandValue.replace('cancel', '').trim();
                 socket.emit('cancel', commandValue);
 
+            } else if (commandValue.startsWith("fleet")) {
+                socket.emit('fleet');
+
+            } else if (commandValue.startsWith("surrender")) {
+                socket.emit('surrender');
+
             } else if (commandValue.startsWith("ship")) {
                 commandValue = commandValue.replace('ship', '').trim();
                 let args = commandValue.split(" ");
+                console.log(args)
                 if (args.length !== 2) {
                     $('#messages').append($('<li>').text(`there is something wrong with parameter: "${commandValue}"`));
                 }
-                let command = positionToCoordinates(args[1]);
-                if (command != null) {
+
+                let command = positionToCoordinates(args[1].toUpperCase());
+                console.log(args[1]);
+                console.log(command);
+                if (command !== null) {
+                    console.log('ship', args[0] + " " + command);
                     socket.emit('ship', args[0] + " " + command);
                     return
                 }
@@ -72,7 +84,6 @@ $(function () {
                     "Decline received invitation for a game: decline opponent={nickname} <br>" +
                     "Cancel sent game invitation: cancel opponent={nickname} <br>" +
                     "Shoot at some position: shoot {A-Z }{1-25} <br>" +
-                    "Place your ship at some position: ship {shipname} {A-Z}{1-25} <br>" +
                     "Place your ships randomly: random ships <br>" +
                     "Show scoreboard: scoreboard <br>" +
                     "Show my statistics: stats <br>" +
@@ -108,6 +119,16 @@ $(function () {
         table += "</table>";
 
         $('#messages').append($('<li>').html(`<h3>Scoreboard</h3> ${table}`));
+    });
+
+    socket.on('fleet', function (params) {
+        let json = JSON.parse(params);
+        let ships = "";
+        json.forEach((ship) => {
+            ships += `${ship}`;
+        });
+
+        $('#messages').append($('<li>').html(`<h3>Ships</h3> ${ships}`));
     });
 
     socket.on('render ships', function (params) {
@@ -347,8 +368,14 @@ $(function () {
             case "win":
                 $('#messages').append($('<li>').html(`<h3>YOU WON :) - CG</h3>`));
                 break;
+            case "win by surrender":
+                $('#messages').append($('<li>').html(`<h3>YOU WON because your opponent surrendered :) - CG</h3>`));
+                break;
             case "loss":
                 $('#messages').append($('<li>').html(`<h3>YOU LOST :( - GG</h3>`));
+                break;
+            case "loss by surrender":
+                $('#messages').append($('<li>').html(`<h3>YOU LOST because your surrendered :( - GG</h3>`));
                 break;
             default:
                 $('#messages').append($('<li>').text(`There is something wrong with argument while ending game: "${param}"`));
