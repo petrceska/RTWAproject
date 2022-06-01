@@ -259,6 +259,7 @@ class Field {
     }
 
     randomlyFillShips() {
+        this.field = Array.from(Array(this.fieldSize), () => new Array(this.fieldSize).fill(0));
         for (var key in this.possibleShips) {
 
             let generatedShips = this.generateShip(this.shipTypesPicker(key), this.possibleShips[key]);
@@ -266,7 +267,6 @@ class Field {
                 this.addShip(generatedShips.next().value);
             }
             this.possibleShips[key] = 0;
-
         }
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].width === 1) {

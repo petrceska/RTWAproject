@@ -375,7 +375,6 @@ function server(io) {
             } else if (game.player2.name === username) {
                 game.player2.field.randomlyFillShips()
                 socket.emit('render ships', "player=" + game.player2.field.coordOfAllShips);
-
             }
         });
 
