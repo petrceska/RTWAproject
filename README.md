@@ -1,6 +1,6 @@
 # RTWA project
 ## How to use
-Start game: play [array={num}] [ships={num}] [opponent={nickname}] \
+Start game: play [field={num}] [opponent={nickname}] \
 Accept received invitation for a game: accept opponent={nickname} \
 Decline received invitation for a game: decline opponent={nickname} \
 Cancel sent game invitation: cancel opponent={nickname} \

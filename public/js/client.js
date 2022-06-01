@@ -7,6 +7,7 @@ $(function () {
 
     let socket = io();
     socket.emit("it's me", userName);
+    $('#messages').append($('<li>').html(`Welcome! I think writing "help" is a good start :).`));
 
     // ------------------------------------------------------------------------ OUTGOING
 
@@ -79,7 +80,7 @@ $(function () {
 
             } else if (commandValue.startsWith("help")) {
                 $('#messages').append($('<li>').html(
-                    "Start game: play [array={num}] [opponent={nickname}] <br>" +
+                    "Start game: play [field={num}] [opponent={nickname}] <br>" +
                     "Accept received invitation for a game: accept opponent={nickname} <br>" +
                     "Decline received invitation for a game: decline opponent={nickname} <br>" +
                     "Cancel sent game invitation: cancel opponent={nickname} <br>" +
