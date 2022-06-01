@@ -66,9 +66,13 @@ function server(io) {
             game.savePlayerStats(game.player2);
 
             socket.emit('game ended', `loss by surrender`);
+            delete games[getKeyByValue(users, socket)]
+
             if (game.winner.socket !== null) {
                 game.winner.socket.emit('game ended', `win by surrender`);
+                delete games[game.winner.name]
             }
+
         });
 
         socket.on('fleet', function () {
@@ -371,6 +375,11 @@ function server(io) {
         socket.on("random ships", () => {
             let username = getKeyByValue(users, socket);
             let game = games[username];
+
+            if (game.shipsSettled){
+                socket.emit('error', "Game already started, you can not change ships position.");
+                return
+            }
 
             if (game.player1.name === username) {
                 game.player1.field.randomlyFillShips()
