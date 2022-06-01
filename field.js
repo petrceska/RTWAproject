@@ -10,6 +10,7 @@ class Field {
         this.field = Array.from(Array(fieldSize), () => new Array(fieldSize).fill(0));
         this.setPossibleShips = fieldSize;
         this.ships = [];
+        this.maxNumOfShips = null;
     }
 
     set setFieldShips(ships) {
@@ -56,6 +57,25 @@ class Field {
 
     shipMiss(x, y) {
         this.field[x][y] = 3;
+    }
+
+    setPossibleTypeNumbers(size2x1 = 4, size3x1 = 2, size4x1 = 2, size2x2 = 0, size3x2 = 0) {
+        this.possibleShips = {
+            "2x1": size2x1,
+            "3x1": size3x1,
+            "4x1": size4x1,
+            "2x2": size2x2,
+            "3x2": size3x2,
+        };
+        this.setMaxNumOfShips();
+    }
+
+    setMaxNumOfShips() {
+        let value = 0;
+        for (var key in this.possibleShips) {
+            value += this.possibleShips[key];
+        }
+        this.maxNumOfShips = value;
     }
 
     stringifyTypeNames() {
@@ -271,21 +291,9 @@ class Field {
                         availablePlaces.push(fieldWidthPlaces[j]);
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
-                console.log("!!!---place len index---!!!");
-                console.log(placeIndex);
-                console.log("available Len Places");
-                console.log(availablePlaces);
-                console.log("availablePlaces[placeIndex]");
-                console.log(availablePlaces[placeIndex]);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
-                console.log("----------this.ships[i]------------");
-                console.log(this.ships[i]);
-                console.log("slice");
-                console.log(slice);
-                console.log("this.ships[i].position.length");
-                console.log(this.ships[i].position.length);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
                     let x = this.ships[i].position[k][0];
                     let y = this.ships[i].position[k][1];
@@ -301,20 +309,8 @@ class Field {
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].position.length);
-                console.log("!!!---place width index---!!!");
-                console.log(placeIndex);
-                console.log("available Len Places");
-                console.log(availablePlaces);
-                console.log("slice");
-                console.log(slice);
-                console.log("this.ships[i].position.length");
-                console.log(this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
-                console.log("----------this.ships[i]------------");
-                console.log(this.ships[i]);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
-                    console.log("this.ships[i].position[k][0]");
-                    console.log(this.ships[i].position[k][0]);
                     let x = this.ships[i].position[k][0];
                     let y = this.ships[i].position[k][1];
                     this.setValueInField(x, y, 1);
@@ -375,7 +371,7 @@ class Field {
         let ship = new Ship(type);
         let position = [];
         if (this.possibleShips[type] === 0) {
-            console.log("It is not possible to put this type of ship to the");
+            console.log("It is not possible to put this type of ship to the field");
             return -1;
         }
         if (x + ship.width >= this.fieldSize || y + ship.len >= this.fieldSize) {
@@ -402,10 +398,10 @@ class Field {
                 for (let i = 0; i < position.length; i++) {
                     this.setValueInField(position[i][0], position[i][1], 1);
                 }
-                console.log("--ship--]");
-                console.log(ship);
                 this.addShip(ship);
                 this.countShipTypes(ship.type);
+                this.shipsNum = this.ships.length;
+                this.currentShipsNum = this.shipsNum;
             }
         } else {
             console.log("It is not possible to put ship to position: [%d,%d].", x, y);
@@ -414,15 +410,6 @@ class Field {
         return 0;
     }
 
-    setPossibleTypeNumbers(size2x1 = 4, size3x1 = 2, size4x1 = 2, size2x2 = 0, size3x2 = 0) {
-        this.possibleShips = {
-            "2x1": size2x1,
-            "3x1": size3x1,
-            "4x1": size4x1,
-            "2x2": size2x2,
-            "3x2": size3x2,
-        };
-    }
 
     countShipTypes(type) {
         switch (type) {

@@ -121,6 +121,16 @@ function server(io) {
 
         socket.on('shoot', function (msg) {
 
+            if (!game.shipsSettled) {
+                if ((game.player1.field.maxNumOfShips === game.player1.field.shipsNum)
+                    && (game.player2.field.maxNumOfShips === game.player2.field.shipsNum)) {
+                    game.shipsSettled = true;
+                } else {
+                    socket.emit('error', `First you need to create all possible ships."${msg}"`);
+                    return;
+                }
+            }
+
             let coord = null;
             try {
                 coord = msg.split(",");
@@ -370,13 +380,5 @@ function server(io) {
         });
     });
 }
-
-
-// PlayerStats.load(game.player1.name).then(stats => {
-// TODO uložení
-//     stats.gamesPlayed += 1;
-//
-//     stats.saveStats()
-// });
 
 module.exports = server
