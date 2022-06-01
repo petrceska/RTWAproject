@@ -260,27 +260,45 @@ class Field {
             this.setPossibleTypeNumbers(3, 3, 1);
             this.setFieldShips = [ship2x1, lambada1x2, lodka_v_mori1x2, sombrero3x1, laparadise1x3,
                 aurora3x1, torpednik1x4];
+            for (var i = 0; i < this.setFieldShips; i++) {
+                countShipTypes(setFieldShips[i].type);
+            }
         } else if (this.fieldSize <= 10) {
             this.setPossibleTypeNumbers(4, 4, 2);
             this.setFieldShips = [ship2x1, sheep2x1, lambada1x2, lodka_v_mori1x2, sombrero3x1,
                 clun1x3, moskva4x1, torpednik1x4];
+            for (var i = 0; i < this.setFieldShips; i++) {
+                countShipTypes(setFieldShips[i].type);
+            }
         } else if (this.fieldSize <= 12) {
             this.setPossibleTypeNumbers(5, 5, 2);
             this.setFieldShips = [ship2x1, sheep2x1, lambada1x2, lodka2x1, lodka_v_mori1x2, sombrero3x1,
                 clun1x3, aurora3x1, parnik3x1, laparadise1x3, moskva4x1, torpednik1x4];
+            for (var i = 0; i < this.setFieldShips; i++) {
+                countShipTypes(setFieldShips[i].type);
+            }
         } else if (this.fieldSize <= 15) {
             this.setPossibleTypeNumbers(4, 4, 2, 2, 1);
             this.setFieldShips = [ship2x1, sheep2x1, kriznik2x3, lodka2x1, lodka_v_mori1x2,
                 sombrero3x1, clun1x3, parnik3x1, lambada1x2, aurora3x1, moskva4x1, torpednik4x1];
+            for (var i = 0; i < this.setFieldShips; i++) {
+                countShipTypes(setFieldShips[i].type);
+            }
         } else if (this.fieldSize <= 17) {
             this.setPossibleTypeNumbers(5, 5, 2, 2, 2);
             this.setFieldShips = [ship2x1, sheep2x1, kriznik2x3, lodka2x1, lodka_v_mori1x2,
                 sombrero3x1, bitevnik2x2, clun1x3, parnik3x1, lambada1x2, aurora3x1, moskva4x1, torpednik4x1];
+            for (var i = 0; i < this.setFieldShips; i++) {
+                countShipTypes(setFieldShips[i].type);
+            }
         } else {
             this.setPossibleTypeNumbers(5, 5, 4, 2, 2);
             this.setFieldShips = [ship2x1, sheep2x1, kriznik2x3, lodka2x1, lodka_v_mori1x2,
                 sombrero3x1, bitevnik2x2, clun1x3, parnik3x1, lambada1x2, aurora3x1, moskva4x1, torpednik4x1,
                 moskva_na_dne3x2];
+            for (var i = 0; i < this.setFieldShips; i++) {
+                countShipTypes(setFieldShips[i].type);
+            }
         }
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].width === 1) {
@@ -398,8 +416,11 @@ class Field {
                 for (let i = 0; i < position.length; i++) {
                     this.setValueInField(position[i][0], position[i][1], 1);
                 }
+                let enoughShips = this.countShipTypes(ship.type);
+                if (enoughShips === -1) {
+                    return -1;
+                }
                 this.addShip(ship);
-                this.countShipTypes(ship.type);
                 this.shipsNum = this.ships.length;
                 this.currentShipsNum = this.shipsNum;
             }

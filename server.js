@@ -104,15 +104,28 @@ function server(io) {
             }
 
             if (socket !== null && game.player1.socket.id === socket.id) {
-
-                if (game.player1.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1])) === -1) {
+                err = game.player1.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1]))
+                if (err === -1) {
                     socket.emit('error', `you cannot put ship ${type} on position ${coord[0]}, ${coord[1]}.`);
+                    return;
+                } else if (err === -2) {
+                    socket.emit('error', `you cannot put another ship of type: ${type}.`);
+                    socket.emit('error', `you still have left this type of ships to put into the field: ${type}.`);
+                    socket.emit('chat message', `to know which ships still left you can use command "fleet"`);
+                    socket.emit('chat message', JSON.stringify(game.player1.field.possibleShips));
                     return;
                 }
                 socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
             } else {
-                if (game.player2.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1])) === -1) {
+                err = game.player2.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1]))
+                if (err === -1) {
                     socket.emit('error', `you cannot put ship ${type} on position ${coord[0]}, ${coord[1]}.`);
+                    return;
+                } else if (err === -2) {
+                    socket.emit('error', `you cannot put another ship of type: ${type}.`);
+                    socket.emit('error', `you still have left this type of ships to put into the field: ${type}.`);
+                    socket.emit('chat message', `to know which ships still left you can use command "fleet"`);
+                    socket.emit('chat message', JSON.stringify(game.player1.field.possibleShips));
                     return;
                 }
                 socket.emit('render ships', "player=" + game.player2.field.coordOfAllShips);
@@ -120,16 +133,6 @@ function server(io) {
         });
 
         socket.on('shoot', function (msg) {
-
-            if (!game.shipsSettled) {
-                if ((game.player1.field.maxNumOfShips === game.player1.field.shipsNum)
-                    && (game.player2.field.maxNumOfShips === game.player2.field.shipsNum)) {
-                    game.shipsSettled = true;
-                } else {
-                    socket.emit('error', `First you need to create all possible ships."${msg}"`);
-                    return;
-                }
-            }
 
             let coord = null;
             try {
@@ -146,6 +149,16 @@ function server(io) {
             if (game == null) {
                 socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
                 return
+            }
+
+            if (!game.shipsSettled) {
+                if ((game.player1.field.maxNumOfShips === game.player1.field.shipsNum)
+                    && (game.player2.field.maxNumOfShips === game.player2.field.shipsNum)) {
+                    game.shipsSettled = true;
+                } else {
+                    socket.emit('error', `First you need to create all possible ships."${msg}"`);
+                    return;
+                }
             }
 
             if (game.singleplayer) { //TODO better AI
