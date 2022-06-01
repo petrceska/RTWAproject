@@ -91,7 +91,11 @@ class Game {
             } else {
                 stats.score += 1;
             }
-
+            // if (player.misses === 0 && player.hits === 0) {
+            //     stats.hitRate = (stats.hitRate * stats.gamesPlayed + player.hits / player.misses) / (stats.gamesPlayed + 1);
+            // } else {
+            //     stats.hitRate += 0;
+            // }
             let opponent;
             if (player.name === this.player1.name) {
                 opponent = this.player2;
