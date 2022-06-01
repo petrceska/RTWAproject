@@ -122,13 +122,9 @@ $(function () {
     });
 
     socket.on('fleet', function (params) {
-        let json = JSON.parse(params);
-        let ships = "";
-        json.forEach((ship) => {
-            ships += `${ship}`;
-        });
+        let object = JSON.parse(params);
 
-        $('#messages').append($('<li>').html(`<h3>Ships</h3> ${ships}`));
+        $('#messages').append($('<li>').html(`<h3>Fleet</h3>${object['2x1']} ships: 2x1/1x2, ${object['3x1']} ships: 3x1/1x3, ${object['4x1']} ships: 4x1/1x4`));
     });
 
     socket.on('render ships', function (params) {
