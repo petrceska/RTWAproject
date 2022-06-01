@@ -10,6 +10,7 @@ class Field {
         this.field = Array.from(Array(fieldSize), () => new Array(fieldSize).fill(0));
         this.setPossibleShips = fieldSize;
         this.ships = [];
+        this.currentShipsNum = 0;
         this.shipPossibleTypes = [["2x1", "1x2"], ["3x1", "1x3"], ["4x1", "1x4"],];
     }
 
@@ -77,11 +78,8 @@ class Field {
         for (var key in this.possibleShips) {
             value += this.possibleShips[key];
         }
-        console.log("value");
-        console.log(value);
         this.maxNumOfShips = value;
-        console.log("this.maxNumOfShips");
-        console.log(this.maxNumOfShips);
+        this.currentShipsNum = this.ships.length;
     }
 
     checkDestroyedShips() {
@@ -89,6 +87,7 @@ class Field {
             let ship = this.ships[i];
 
             if (this.isShipDestroyed(ship)) {
+                ship = this.ships.splice(i, 1);
                 return ship;
             }
         }
