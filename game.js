@@ -95,7 +95,11 @@ class Game {
             } else {
                 stats.score += 1;
             }
-            stats.hitRate = (stats.hitRate * stats.gamesPlayed + player.hits / player.misses) / (stats.gamesPlayed + 1);
+            if (player.misses === 0 && player.hits === 0) {
+                stats.hitRate = (stats.hitRate * stats.gamesPlayed + player.hits / player.misses) / (stats.gamesPlayed + 1);
+            } else {
+                stats.hitRate += 0;
+            }
             stats.gamesPlayed += 1;
             console.log(stats);
             stats.saveStats();
