@@ -44,9 +44,6 @@ function server(io) {
             } else {
             }
             users[name] = socket;
-
-            //TODO: Solve case when players have the same name
-            // Proposal: make a dictionary with name and id where ID will be generated automaticaly and everything will be matched to it
         });
 
         socket.on('chat message', function (msg) {
@@ -64,7 +61,9 @@ function server(io) {
                 game.winner = game.player2;
             } else {
                 game.winner = game.player1;
-            } //TODO update stats
+            }
+            game.savePlayerStats(game.player1);
+            game.savePlayerStats(game.player2);
 
             socket.emit('game ended', `loss by surrender`);
             if (game.winner.socket !== null) {
@@ -242,12 +241,6 @@ function server(io) {
                     socket.emit('not your turn');
                 }
             }
-            // socket.emit('game ended', `win`);
-            // socket.emit('game ended', `loss`);
-            // game.player2.socket.emit('game invite', `${game.player1.name}`);
-            // TODO responses
-
-
         });
 
         socket.on("decline", function (name) {
@@ -281,7 +274,7 @@ function server(io) {
                 game.start = new Date();
                 game.player1.socket.emit('construct game', `field=${game.fieldSize} yourTurn`);
                 game.player2.socket.emit('construct game', `field=${game.fieldSize}`);
-                //TODO create objects and start game
+                // create objects and start game
 
             } else {
                 socket.emit('error', `There is no game associated with user ${name}.`);
@@ -348,11 +341,9 @@ function server(io) {
             if (opponent == null) {
                 let game = Game.createSingleplayer(username, socket, fieldSize);
                 game.start = new Date();
-                game.player1.field.randomlyFillShips()
-                game.player2.field.randomlyFillShips()
+                game.player2.field.randomlyFillShips() // fill AI array with ships
                 games[username] = game
                 socket.emit('construct game', `field=${game.fieldSize} yourTurn`);
-                socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
 
             } else {
                 if (opponent === username) {
@@ -371,7 +362,6 @@ function server(io) {
                 games[game.player2.name] = game
                 socket.emit('waiting for opponent', `opponent=${game.player2.name}`);
                 game.player2.socket.emit('game invite', `opponent=${game.player1.name}`);
-
             }
         });
 
