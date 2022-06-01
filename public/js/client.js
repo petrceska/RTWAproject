@@ -85,6 +85,8 @@ $(function () {
                     "Cancel sent game invitation: cancel opponent={nickname} <br>" +
                     "Shoot at some position: shoot {A-Z }{1-25} <br>" +
                     "Place your ships randomly: random ships <br>" +
+                    "Place your ship at some position: ship {shipname} {A-Z}{1-25}" +
+                    "Ships you still need to place: fleet <br>" +
                     "Show scoreboard: scoreboard <br>" +
                     "Show my statistics: stats <br>" +
                     "Show statistics for another player: stats {nickname}<br>"
