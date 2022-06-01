@@ -216,8 +216,8 @@ $(function () {
     socket.on('stats', function (msg) {
         let json = JSON.parse(msg);
 
-        let table = `<table class="scoreboard"><tr><th>Name</th><th>Games won</th><th>Games played</th><th>Score</th></tr>`
-            + `<tr><td>${json.name}</td><td>${json.gamesWon}</td><td>${json.gamesPlayed}</td><td>${json.score}</td></tr>`
+        let table = `<table class="scoreboard"><tr><th>Name</th><th>Games won</th><th>Games played</th><th>Hit rate</th><th>Score</th></tr>`
+            + `<tr><td>${json.name}</td><td>${json.gamesWon}</td><td>${json.gamesPlayed}</td><td>${json.hitRate}</td><td>${json.score}</td></tr>`
             + "</table>";
 
         $('#messages').append($('<li>').html(`<h3>Statistics</h3> ${table}`));

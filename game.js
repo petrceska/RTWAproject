@@ -85,17 +85,24 @@ class Game {
 
     savePlayerStats(player) {
         PlayerStats.load(player.name).then(stats => {
-            if (this.player1.name === this.winner.name) {
+            if (player.name === this.winner.name) {
                 stats.gamesWon += 1;
-                if (this.fieldSize > 12) {
-                    stats.score += 5;
-                } else {
-                    stats.score += 2;
-                }
+                stats.score += this.fieldSize;
             } else {
                 stats.score += 1;
             }
-            stats.hitRate = (stats.hitRate * stats.gamesPlayed + player.hits / player.misses) / (stats.gamesPlayed + 1);
+
+            let opponent;
+            if (player.name === this.player1.name) {
+                opponent = this.player2;
+            } else {
+                opponent = this.player1;
+            }
+
+            let hm = opponent.field.coordsOfAllHits().length / opponent.field.coordsOfAllMisses().length;
+
+            stats.hitRate = (stats.hitRate * stats.gamesPlayed + hm) / (stats.gamesPlayed + 1);
+
             stats.gamesPlayed += 1;
             console.log(stats);
             stats.saveStats();
