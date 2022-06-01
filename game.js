@@ -23,6 +23,7 @@ class Game {
         this.singleplayer = !type;
         this.winner = null;
         this.start = null;
+        this.shipsSettled = false;
     }
 
     myTurn(id) {

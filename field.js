@@ -291,21 +291,9 @@ class Field {
                         availablePlaces.push(fieldWidthPlaces[j]);
                 }
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
-                console.log("!!!---place len index---!!!");
-                console.log(placeIndex);
-                console.log("available Len Places");
-                console.log(availablePlaces);
-                console.log("availablePlaces[placeIndex]");
-                console.log(availablePlaces[placeIndex]);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
-                console.log("----------this.ships[i]------------");
-                console.log(this.ships[i]);
-                console.log("slice");
-                console.log(slice);
-                console.log("this.ships[i].position.length");
-                console.log(this.ships[i].position.length);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
                     let x = this.ships[i].position[k][0];
                     let y = this.ships[i].position[k][1];
@@ -321,20 +309,8 @@ class Field {
                 let placeIndex = Field.getRandomInt(0, availablePlaces.length - 1);
                 let avalPlace = availablePlaces[placeIndex];
                 let slice = avalPlace.slice(0, this.ships[i].position.length);
-                console.log("!!!---place width index---!!!");
-                console.log(placeIndex);
-                console.log("available Len Places");
-                console.log(availablePlaces);
-                console.log("slice");
-                console.log(slice);
-                console.log("this.ships[i].position.length");
-                console.log(this.ships[i].position.length);
                 this.ships[i].changePosition(slice);
-                console.log("----------this.ships[i]------------");
-                console.log(this.ships[i]);
                 for (let k = 0; k < this.ships[i].position.length; k++) {
-                    console.log("this.ships[i].position[k][0]");
-                    console.log(this.ships[i].position[k][0]);
                     let x = this.ships[i].position[k][0];
                     let y = this.ships[i].position[k][1];
                     this.setValueInField(x, y, 1);
@@ -422,8 +398,6 @@ class Field {
                 for (let i = 0; i < position.length; i++) {
                     this.setValueInField(position[i][0], position[i][1], 1);
                 }
-                console.log("--ship--]");
-                console.log(ship);
                 this.addShip(ship);
                 this.countShipTypes(ship.type);
                 this.shipsNum = this.ships.length;
