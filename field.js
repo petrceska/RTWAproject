@@ -28,11 +28,11 @@ class Field {
         } else if (fieldSize <= 12) {
             this.setPossibleTypeNumbers(5, 5, 2);
         } else if (fieldSize <= 15) {
-            this.setPossibleTypeNumbers(4, 4, 2, 2, 1);
+            this.setPossibleTypeNumbers(8, 8, 4);
         } else if (fieldSize <= 17) {
-            this.setPossibleTypeNumbers(5, 5, 2, 2, 2);
+            this.setPossibleTypeNumbers(10, 10, 5);
         } else {
-            this.setPossibleTypeNumbers(5, 5, 4, 2, 2);
+            this.setPossibleTypeNumbers(12, 12, 6);
         }
     }
 
