@@ -374,9 +374,11 @@ function server(io) {
 
             if (game.player1.name === username) {
                 game.player1.field.randomlyFillShips()
+                socket.emit('construct game', `field=${game.fieldSize}` + (game.player1Turn ? " yourTurn" : ""));
                 socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
             } else if (game.player2.name === username) {
                 game.player2.field.randomlyFillShips()
+                socket.emit('construct game', `field=${game.fieldSize}` + (game.player1Turn ? "" : " yourTurn"));
                 socket.emit('render ships', "player=" + game.player2.field.coordOfAllShips);
             }
         });

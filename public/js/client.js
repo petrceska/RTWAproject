@@ -129,6 +129,7 @@ $(function () {
         $('#messages').append($('<li>').html(`<h3>Fleet</h3>${object['2x1']} ships: 2x1/1x2, ${object['3x1']} ships: 3x1/1x3, ${object['4x1']} ships: 4x1/1x4`));
     });
 
+
     socket.on('render ships', function (params) {
         let argArray = params.split(" ");
 
@@ -313,6 +314,9 @@ $(function () {
     });
 
     socket.on('construct game', function (params) {
+        $('#field-player').html("");
+        $('#field-opponent').html("");
+
         let fieldSize = 10;
 
         let argArray = params.split(" ");
