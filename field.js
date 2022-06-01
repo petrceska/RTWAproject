@@ -79,7 +79,6 @@ class Field {
             value += this.possibleShips[key];
         }
         this.maxNumOfShips = value;
-        this.currentShipsNum = this.ships.length;
     }
 
     checkDestroyedShips() {
