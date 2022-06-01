@@ -67,7 +67,7 @@ function server(io) {
 
             socket.emit('game ended', `loss by surrender`);
             if (game.winner.socket !== null) {
-                game.winner.emit('game ended', `win by surrender`);
+                game.winner.socket.emit('game ended', `win by surrender`);
             }
         });
 
@@ -77,8 +77,11 @@ function server(io) {
                 socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
                 return
             }
-
-            io.emit('fleet', JSON.stringify(game.player1.field.possibleShips));
+            if (game.player1.socket.id === socket.id){
+                socket.emit('fleet', JSON.stringify(game.player1.field.possibleShips));
+            }else{
+                socket.emit('fleet', JSON.stringify(game.player2.field.possibleShips));
+            }
         });
 
         socket.on('ship', function (msg) {

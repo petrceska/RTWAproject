@@ -99,7 +99,7 @@ class Game {
                 opponent = this.player1;
             }
 
-            let hm = opponent.field.coordsOfAllHits().length / opponent.field.coordsOfAllMisses().length;
+            let hm = opponent.field.coordsOfAllHits.length / opponent.field.coordsOfAllMisses.length;
 
             stats.hitRate = (stats.hitRate * stats.gamesPlayed + hm) / (stats.gamesPlayed + 1);
 
