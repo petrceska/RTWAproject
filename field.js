@@ -374,7 +374,7 @@ class Field {
             console.log("It is not possible to put this type of ship to the field");
             return -1;
         }
-        if (x + ship.width >= this.fieldSize || y + ship.len >= this.fieldSize) {
+        if (x + ship.width > this.fieldSize || y + ship.len > this.fieldSize) {
             console.log("It is not possible to put ship in chosen position, it would be put out of the field.");
             return -1;
         }

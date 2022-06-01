@@ -62,7 +62,7 @@ function server(io) {
 
             if (game.player1.socket.id === socket.id) {
                 game.winner = game.player2;
-            }else{
+            } else {
                 game.winner = game.player1;
             } //TODO update stats
 
@@ -105,13 +105,13 @@ function server(io) {
 
             if (socket !== null && game.player1.socket.id === socket.id) {
 
-                if (game.player1.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1])) === -1){
+                if (game.player1.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1])) === -1) {
                     socket.emit('error', `you cannot put ship ${type} on position ${coord[0]}, ${coord[1]}.`);
                     return;
                 }
                 socket.emit('render ships', "player=" + game.player1.field.coordOfAllShips);
-            }else{
-                if (game.player2.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1])) === -1){
+            } else {
+                if (game.player2.field.putShipToField(type, parseInt(coord[0]), parseInt(coord[1])) === -1) {
                     socket.emit('error', `you cannot put ship ${type} on position ${coord[0]}, ${coord[1]}.`);
                     return;
                 }
