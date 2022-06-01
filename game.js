@@ -22,6 +22,7 @@ class Game {
         this.multiplayer = type;
         this.singleplayer = !type;
         this.winner = null;
+        this.beginned = null;
         this.start = null;
         this.shipsSettled = false;
     }
