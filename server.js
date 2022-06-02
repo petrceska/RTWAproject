@@ -81,9 +81,9 @@ function server(io) {
                 socket.emit('error', `There is no game associated with user ${getKeyByValue(users, socket)}.`);
                 return
             }
-            if (game.player1.socket.id === socket.id){
+            if (game.player1.socket.id === socket.id) {
                 socket.emit('fleet', JSON.stringify(game.player1.field.possibleShips));
-            }else{
+            } else {
                 socket.emit('fleet', JSON.stringify(game.player2.field.possibleShips));
             }
         });
@@ -181,7 +181,6 @@ function server(io) {
                         end = game.checkGameWon(socket);
                         if (end) {
                             game.savePlayerStats(game.player1);
-                            game.savePlayerStats(game.player2);
                         }
                     }
 
@@ -376,7 +375,7 @@ function server(io) {
             let username = getKeyByValue(users, socket);
             let game = games[username];
 
-            if (game.shipsSettled){
+            if (game.shipsSettled) {
                 socket.emit('error', "Game already started, you can not change ships position.");
                 return
             }

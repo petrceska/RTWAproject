@@ -38,7 +38,6 @@ class Game {
         } else {
             field = this.player1.field;
         }
-
         if (field.checkShipPosition(x, y)) {
             field.shipHit(x, y);
             return true;
@@ -81,7 +80,7 @@ class Game {
     }
 
     get randomPosition() {
-        return Math.round(Math.random() * this.fieldSize);
+        return Math.round(Math.random() * (this.fieldSize - 1));
     }
 
     savePlayerStats(player) {
