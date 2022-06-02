@@ -51,16 +51,14 @@ $(function () {
             } else if (commandValue.startsWith("ship")) {
                 commandValue = commandValue.replace('ship', '').trim();
                 let args = commandValue.split(" ");
-                console.log(args)
+
                 if (args.length !== 2) {
                     $('#messages').append($('<li>').text(`there is something wrong with parameter: "${commandValue}"`));
                 }
 
                 let command = positionToCoordinates(args[1].toUpperCase());
-                console.log(args[1]);
-                console.log(command);
+
                 if (command !== null) {
-                    console.log('ship', args[0] + " " + command);
                     socket.emit('ship', args[0] + " " + command);
                     return
                 }
@@ -114,10 +112,12 @@ $(function () {
 
     socket.on('scoreboard', function (msg) {
         let json = JSON.parse(msg);
-        let table = `<table class="scoreboard"><tr><th>Rank</th><th>Name</th><th>Games won</th><th>Games played</th><th>Score</th></tr>`;
+        console.log(json);
+        let table = `<table class="scoreboard"><tr><th>Rank</th><th>Name</th><th>Games won</th><th>Accuracy</th><th>Score</th></tr>`;
 
         json.forEach((player, i) => {
-            table += `<tr><td>${i + 1}</td><td>${player.name}</td><td>${player.gamesWon}</td><td>${player.gamesPlayed}</td><td>${player.score}</td></tr>`;
+            let hr = (parseFloat(player.hitRate) * 100).toFixed(2);
+            table += `<tr><td>${i + 1}</td><td>${player.name}</td><td>${player.gamesWon}</td><td>${hr}%</td><td>${player.score}</td></tr>`;
         })
         table += "</table>";
 
@@ -217,9 +217,10 @@ $(function () {
 
     socket.on('stats', function (msg) {
         let json = JSON.parse(msg);
+        let hr = (parseFloat(json.hitRate) * 100).toFixed(2);
 
-        let table = `<table class="scoreboard"><tr><th>Name</th><th>Games won</th><th>Games played</th><th>Hit rate</th><th>Score</th></tr>`
-            + `<tr><td>${json.name}</td><td>${json.gamesWon}</td><td>${json.gamesPlayed}</td><td>${json.hitRate}</td><td>${json.score}</td></tr>`
+        let table = `<table class="scoreboard"><tr><th>Name</th><th>Games won</th><th>Games played</th><th>Accuracy</th><th>Score</th></tr>`
+            + `<tr><td>${json.name}</td><td>${json.gamesWon}</td><td>${json.gamesPlayed}</td><td>${hr}%</td><td>${json.score}</td></tr>`
             + "</table>";
 
         $('#messages').append($('<li>').html(`<h3>Statistics</h3> ${table}`));
@@ -386,8 +387,6 @@ $(function () {
         }
         $('#field-player').removeClass("turn");
         $('#field-opponent').removeClass("turn");
-
-        socket.emit('stats', userName);
 
         $('#field-player').html("");
         $('#field-opponent').html("");

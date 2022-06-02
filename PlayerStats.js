@@ -34,7 +34,6 @@ class PlayerStats {
     async saveStats() {
         try {
             await client.connect();
-
             const db = client.db(dbName);
 
             // Use the collection "playerStats"
@@ -48,6 +47,7 @@ class PlayerStats {
         } finally {
             await client.close()
         }
+        return true
     }
 
 
@@ -56,7 +56,7 @@ class PlayerStats {
             await client.connect();
             const db = client.db(dbName);
 
-            // Use the collection "games"
+            // Use the collection "playerStats"
             const col = db.collection("playerStats");
 
             // Find one game document

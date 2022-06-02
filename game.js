@@ -83,29 +83,43 @@ class Game {
         return Math.round(Math.random() * (this.fieldSize - 1));
     }
 
-    savePlayerStats(player) {
-        PlayerStats.load(player.name).then(stats => {
-            if (player.name === this.winner.name) {
-                stats.gamesWon += 1;
-                stats.score += this.fieldSize;
+    savePlayerStats() {
+        PlayerStats.load(this.player1.name).then(statsP1 => {
+            if (this.player1.name === this.winner.name) {
+                statsP1.gamesWon += 1;
+                statsP1.score += this.fieldSize;
             } else {
-                stats.score += 1;
+                statsP1.score += 1;
             }
 
-            let opponent;
-            if (player.name === this.player1.name) {
-                opponent = this.player2;
-            } else {
-                opponent = this.player1;
-            }
+            let hits = this.player2.field.coordsOfAllHits.length;
+            let hm = hits / (hits + this.player2.field.coordsOfAllMisses.length);
 
-            let hm = opponent.field.coordsOfAllHits.length / opponent.field.coordsOfAllMisses.length;
+            statsP1.hitRate = (statsP1.hitRate * statsP1.gamesPlayed + hm) / (statsP1.gamesPlayed + 1);
 
-            stats.hitRate = (stats.hitRate * stats.gamesPlayed + hm) / (stats.gamesPlayed + 1);
+            statsP1.gamesPlayed += 1;
+            this.player1.socket.emit('stats', JSON.stringify(statsP1));
 
-            stats.gamesPlayed += 1;
-            console.log(stats);
-            stats.saveStats();
+            statsP1.saveStats().then(x => { // wait until connection after first actualization ends
+                PlayerStats.load(this.player2.name).then(statsP2 => {
+                    if (this.player2.name === this.winner.name) {
+                        statsP2.gamesWon += 1;
+                        statsP2.score += this.fieldSize;
+                    } else {
+                        statsP2.score += 1;
+                    }
+
+                    let hm = this.player1.field.coordsOfAllHits.length / this.player1.field.coordsOfAllMisses.length;
+
+                    statsP2.hitRate = (statsP2.hitRate * statsP2.gamesPlayed + hm) / (statsP2.gamesPlayed + 1);
+
+                    statsP2.gamesPlayed += 1;
+                    if (this.player2.socket !== null){
+                        this.player2.socket.emit('stats', JSON.stringify(statsP1));
+                    }
+                    statsP2.saveStats();
+                });
+            });
         });
     }
 }

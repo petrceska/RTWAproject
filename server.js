@@ -62,8 +62,7 @@ function server(io) {
             } else {
                 game.winner = game.player1;
             }
-            game.savePlayerStats(game.player1);
-            game.savePlayerStats(game.player2);
+            game.savePlayerStats();
 
             socket.emit('game ended', `loss by surrender`);
             delete games[getKeyByValue(users, socket)]
@@ -178,9 +177,9 @@ function server(io) {
                         });
                         socket.emit('render ships', "opponent=" + JSON.stringify(coords));
 
-                        end = game.checkGameWon(socket);
+                        let end = game.checkGameWon(socket);
                         if (end) {
-                            game.savePlayerStats(game.player1);
+                            game.savePlayerStats();
                         }
                     }
 
@@ -199,8 +198,7 @@ function server(io) {
                     if (destroyed !== null) {
                         end = game.checkGameWon(null);
                         if (end) {
-                            game.savePlayerStats(game.player1);
-                            game.savePlayerStats(game.player2);
+                            game.savePlayerStats();
                         }
                     }
                 } else {
@@ -232,8 +230,7 @@ function server(io) {
 
                             end = game.checkGameWon(socket);
                             if (end) {
-                                game.savePlayerStats(game.player1);
-                                game.savePlayerStats(game.player2);
+                                game.savePlayerStats();
                             }
                         }
 

@@ -459,7 +459,6 @@ class Field {
                 coords.push(i);
             });
         });
-        console.log(coords);
         return JSON.stringify(coords)
     }
 
