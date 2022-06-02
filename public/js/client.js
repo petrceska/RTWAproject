@@ -12,93 +12,92 @@ $(function () {
     // ------------------------------------------------------------------------ OUTGOING
 
     $('form').submit(function (e) {
-            e.preventDefault(); // prevents page reloading
-            let command = $('#command');
-            let commandValue = command.val().toLowerCase();
+        e.preventDefault(); // prevents page reloading
+        let command = $('#command');
+        let commandValue = command.val().toLowerCase();
 
-            if (commandValue.startsWith("play")) {
+        if (commandValue.startsWith("play")) {
 
-                commandValue = commandValue.replace('play', '').trim();
-                commandValue = commandValue.replace('play', '').trim();
-                socket.emit('play', commandValue);
+            commandValue = commandValue.replace('play', '').trim();
+            commandValue = commandValue.replace('play', '').trim();
+            socket.emit('play', commandValue);
 
-            } else if (commandValue.startsWith("shoot")) {
-                commandValue = commandValue.replace('shoot', '').trim().toUpperCase();
+        } else if (commandValue.startsWith("shoot")) {
+            commandValue = commandValue.replace('shoot', '').trim().toUpperCase();
 
-                let command = positionToCoordinates(commandValue);
-                if (command != null) {
-                    socket.emit('shoot', command);
-                }
-
-            } else if (commandValue.startsWith("accept")) {
-                commandValue = commandValue.replace('accept', '').trim();
-                socket.emit('accept', commandValue);
-
-            } else if (commandValue.startsWith("decline")) {
-                commandValue = commandValue.replace('decline', '').trim();
-                socket.emit('decline', commandValue);
-
-            } else if (commandValue.startsWith("cancel")) {
-                commandValue = commandValue.replace('cancel', '').trim();
-                socket.emit('cancel', commandValue);
-
-            } else if (commandValue.startsWith("fleet")) {
-                socket.emit('fleet');
-
-            } else if (commandValue.startsWith("surrender")) {
-                socket.emit('surrender');
-
-            } else if (commandValue.startsWith("ship")) {
-                commandValue = commandValue.replace('ship', '').trim();
-                let args = commandValue.split(" ");
-
-                if (args.length !== 2) {
-                    $('#messages').append($('<li>').text(`there is something wrong with parameter: "${commandValue}"`));
-                }
-
-                let command = positionToCoordinates(args[1].toUpperCase());
-
-                if (command !== null) {
-                    socket.emit('ship', args[0] + " " + command);
-                    return
-                }
-                $('#messages').append($('<li>').text(`there is something wrong with parameter: "${commandValue}"`));
-
-            } else if (commandValue.startsWith("scoreboard")) {
-                socket.emit('scoreboard');
-            } else if (commandValue.startsWith("random ships")) {
-                socket.emit('random ships');
-
-            } else if (commandValue.startsWith("stats")) {
-                commandValue = commandValue.replace('stats', '').trim();
-                if (commandValue == null || commandValue === "") {
-                    commandValue = userName;
-                }
-                socket.emit('stats', commandValue);
-
-            } else if (commandValue.startsWith("help")) {
-                $('#messages').append($('<li>').html(
-                    "Start game: play [field={num}] [opponent={nickname}] <br>" +
-                    "Accept received invitation for a game: accept opponent={nickname} <br>" +
-                    "Decline received invitation for a game: decline opponent={nickname} <br>" +
-                    "Cancel sent game invitation: cancel opponent={nickname} <br>" +
-                    "Shoot at some position: shoot {A-Z }{1-25} <br>" +
-                    "Place your ships randomly: random ships <br>" +
-                    "Place your ship at some position: ship {shipname} {A-Z}{1-25}" +
-                    "Ships you still need to place: fleet <br>" +
-                    "Show scoreboard: scoreboard <br>" +
-                    "Show my statistics: stats <br>" +
-                    "Show statistics for another player: stats {nickname}<br>"
-                ));
-
-            } else {
-                socket.emit('chat message', commandValue);
-
+            let command = positionToCoordinates(commandValue);
+            if (command != null) {
+                socket.emit('shoot', command);
             }
-            command.val('');
+        return false;
+        } else if (commandValue.startsWith("accept")) {
+            commandValue = commandValue.replace('accept', '').trim();
+            socket.emit('accept', commandValue);
+
+        } else if (commandValue.startsWith("decline")) {
+            commandValue = commandValue.replace('decline', '').trim();
+            socket.emit('decline', commandValue);
+
+        } else if (commandValue.startsWith("cancel")) {
+            commandValue = commandValue.replace('cancel', '').trim();
+            socket.emit('cancel', commandValue);
+
+        } else if (commandValue.startsWith("fleet")) {
+            socket.emit('fleet');
+
+        } else if (commandValue.startsWith("surrender")) {
+            socket.emit('surrender');
+
+        } else if (commandValue.startsWith("ship")) {
+            commandValue = commandValue.replace('ship', '').trim();
+            let args = commandValue.split(" ");
+
+            if (args.length !== 2) {
+                $('#messages').append($('<li>').text(`there is something wrong with parameter: "${commandValue}"`));
+            }
+
+            let command = positionToCoordinates(args[1].toUpperCase());
+
+            if (command !== null) {
+                socket.emit('ship', args[0] + " " + command);
+            } else {
+                $('#messages').append($('<li>').text(`there is something wrong with parameter: "${commandValue}"`));
+            }
             return false;
+        } else if (commandValue.startsWith("scoreboard")) {
+            socket.emit('scoreboard');
+        } else if (commandValue.startsWith("random ships")) {
+            socket.emit('random ships');
+
+        } else if (commandValue.startsWith("stats")) {
+            commandValue = commandValue.replace('stats', '').trim();
+            if (commandValue == null || commandValue === "") {
+                commandValue = userName;
+            }
+            socket.emit('stats', commandValue);
+
+        } else if (commandValue.startsWith("help")) {
+            $('#messages').append($('<li>').html(
+                "Start game: play [field={num}] [opponent={nickname}] <br>" +
+                "Accept received invitation for a game: accept opponent={nickname} <br>" +
+                "Decline received invitation for a game: decline opponent={nickname} <br>" +
+                "Cancel sent game invitation: cancel opponent={nickname} <br>" +
+                "Shoot at some position: shoot {A-Z }{1-25} <br>" +
+                "Place your ships randomly: random ships <br>" +
+                "Place your ship at some position: ship {shipname} {A-Z}{1-25}" +
+                "Ships you still need to place: fleet <br>" +
+                "Show scoreboard: scoreboard <br>" +
+                "Show my statistics: stats <br>" +
+                "Show statistics for another player: stats {nickname}<br>"
+            ));
+
+        } else {
+            socket.emit('chat message', commandValue);
+
         }
-    );
+        command.val('');
+        return false;
+    });
 
     // ------------------------------------------------------------------------ INCOMING
 
