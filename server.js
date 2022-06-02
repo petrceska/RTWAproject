@@ -166,7 +166,7 @@ function server(io) {
                 }
             }
 
-            if (game.singleplayer) { //TODO better AI
+            if (game.singleplayer) {
                 if (game.shoot(coord[0], coord[1], socket.id)) {
                     socket.emit('hit', `${coord[0]},${coord[1]}`);
                     let destroyed = game.checkSankShips(socket);

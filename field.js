@@ -360,11 +360,11 @@ class Field {
         let ship = new Ship(type);
         let position = [];
         if (this.possibleShips[type] === 0) {
-            console.log("It is not possible to put this type of ship to the field");
+            console.error("It is not possible to put this type of ship to the field");
             return -1;
         }
         if (x + ship.width > this.fieldSize || y + ship.len > this.fieldSize) {
-            console.log("It is not possible to put ship in chosen position, it would be put out of the field.");
+            console.error("It is not possible to put ship in chosen position, it would be put out of the field.");
             return -1;
         }
         if (!this.checkShipPosition(x, y)) {
@@ -373,14 +373,14 @@ class Field {
                     if (!this.checkShipPosition(i, j)) {
                         this.saveIndexesToArray(position, i, j);
                     } else {
-                        console.log("It is not possible to put ship to position: [%d,%d].", i, j);
+                        console.error("It is not possible to put ship to position: [%d,%d].", i, j);
                         return -1;
                     }
                 }
             }
             if (position.length !== 0) {
                 if (position.length !== (ship.len * ship.width)) {
-                    console.log("Position is not fitting this type of ship.");
+                    console.error("Position is not fitting this type of ship.");
                     return -1;
                 }
                 ship.changePosition(position);
@@ -394,7 +394,7 @@ class Field {
                 this.addShip(ship);
             }
         } else {
-            console.log("It is not possible to put ship to position: [%d,%d].", x, y);
+            console.error("It is not possible to put ship to position: [%d,%d].", x, y);
             return -1;
         }
         return 0;
@@ -408,7 +408,7 @@ class Field {
                 if (this.possibleShips["2x1"] > 0) {
                     this.possibleShips["2x1"] -= 1;
                 } else {
-                    console.log("You are not able to use more 2x1 or 1x2 ships.");
+                    console.error("You are not able to use more 2x1 or 1x2 ships.");
                     return -1;
                 }
                 break;
@@ -417,7 +417,7 @@ class Field {
                 if (this.possibleShips["3x1"] > 0) {
                     this.possibleShips["3x1"] -= 1;
                 } else {
-                    console.log("You are not able to use more 3x1 or 1x3 ships.");
+                    console.error("You are not able to use more 3x1 or 1x3 ships.");
                     return -1;
                 }
                 break;
@@ -426,7 +426,7 @@ class Field {
                 if (this.possibleShips["4x1"] > 0) {
                     this.possibleShips["4x1"] -= 1;
                 } else {
-                    console.log("You are not able to use more 4x1 or 1x4 ships.");
+                    console.error("You are not able to use more 4x1 or 1x4 ships.");
                     return -1;
                 }
                 break;
@@ -434,7 +434,7 @@ class Field {
                 if (this.possibleShips["2x2"] > 0) {
                     this.possibleShips["2x2"] -= 1;
                 } else {
-                    console.log("You are not able to use more 2x2 ships.");
+                    console.error("You are not able to use more 2x2 ships.");
                     return -1;
                 }
                 break;
@@ -443,7 +443,7 @@ class Field {
                 if (this.possibleShips["3x2"] > 0) {
                     this.possibleShips["3x2"] -= 1;
                 } else {
-                    console.log("You are not able to use more 3x2 or 2x3 ships.");
+                    console.error("You are not able to use more 3x2 or 2x3 ships.");
                     return -1;
                 }
                 break;

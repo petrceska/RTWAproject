@@ -114,7 +114,7 @@ class Game {
                     statsP2.hitRate = (statsP2.hitRate * statsP2.gamesPlayed + hm) / (statsP2.gamesPlayed + 1);
 
                     statsP2.gamesPlayed += 1;
-                    if (this.player2.socket !== null){
+                    if (this.player2.socket !== null) {
                         this.player2.socket.emit('stats', JSON.stringify(statsP1));
                     }
                     statsP2.saveStats();

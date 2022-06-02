@@ -1,7 +1,7 @@
 {
   "name": "project",
   "version": "1.0.0",
-  "description": "project desc TODO",
+  "description": "First version of game where you are shooting at your opponent fleet and trying to sink all of their ships before they sink yours.",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {

@@ -112,7 +112,6 @@ $(function () {
 
     socket.on('scoreboard', function (msg) {
         let json = JSON.parse(msg);
-        console.log(json);
         let table = `<table class="scoreboard"><tr><th>Rank</th><th>Name</th><th>Games won</th><th>Accuracy</th><th>Score</th></tr>`;
 
         json.forEach((player, i) => {
